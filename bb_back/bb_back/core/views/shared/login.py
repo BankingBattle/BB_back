@@ -49,4 +49,4 @@ class LoginUserView(APIView):
                 message=f"Unable to login: Wrong password provided")
         token = binascii.hexlify(os.urandom(20)).decode()
         cache.set(token, user.login)
-        return response(data={111: token})
+        return response(LoginResponseSchema(access_token=token).dict())
