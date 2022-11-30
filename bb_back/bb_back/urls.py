@@ -15,7 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from bb_back.settings import API_PREFIX, API_VERSION
+from bb_back.core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path(f"{API_PREFIX}/{API_VERSION}/register",
+         views.RegistrationUserView.as_view()),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/auth",
+        views.LoginUserView.as_view(),
+    )
 ]
