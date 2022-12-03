@@ -1,3 +1,3 @@
-from .shared import RegistrationUserView, LoginUserView
+from .shared import RegistrationUserView
 
-__all__ = ["RegistrationUserView", "LoginUserView"]
+__all__ = ["RegistrationUserView"]

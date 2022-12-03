@@ -1,22 +1,26 @@
 from rest_framework.views import APIView
-from pydantic import BaseModel, constr, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 from rest_framework import status
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 
 from bb_back.core.models import User
 
 from bb_back.core.utils.view_utils import response, parse_validation_error
 
 
-class RegistrationRequestSchema(BaseModel):
-    first_name: constr(max_length=30)
-    last_name: constr(max_length=30)
-    email: constr(max_length=63)
-    login: constr(max_length=30)
-    password: constr(max_length=30)
+class BaseRegistrationRequestSchema(BaseModel):
+    first_name: str = Field(..., max_length=30)
+    last_name: str = Field(..., max_length=30)
+    email: str = Field(..., max_length=63)
+    login: str = Field(..., max_length=30)
+    password: str = Field(..., max_length=30)
 
 
-class RegistrationResponseSchema(BaseModel):
+class RegistrationRequestSchema(BaseRegistrationRequestSchema):
+    password: str = Field(..., max_length=30)
+
+
+class RegistrationResponseSchema(BaseRegistrationRequestSchema):
     ...
 
 
@@ -54,7 +58,8 @@ class RegistrationUserView(APIView):
                     last_name=user_schema.last_name,
                     login=user_schema.login,
                     email=user_schema.email,
-                    hashed_pass=hashed_password)
+                    password=hashed_password)
         user.save()
-        return response(data=user_schema.dict(),
+        response_data = RegistrationResponseSchema(**user_schema.dict())
+        return response(data=response_data.dict(),
                         message="User succesfully created")
