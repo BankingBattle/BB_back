@@ -12,11 +12,19 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+import environ
 from typing import List
 
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False))
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+env_file = '.env'
+if not env.str('ENV_PATH', '.env') == '.env':
+    env_file = env.str('ENV_PATH', '.env') + env_file
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -28,6 +36,13 @@ SECRET_KEY = 'django-insecure-+40=5jx%s9kglkiq-me8%@&!iqd#j5eov%ho!@9ezcaxt7kfjb
 DEBUG = True
 
 ALLOWED_HOSTS: List[str] = []
+
+# Environs
+DATABASE_NAME = env('DATABASE_NAME')
+DATABASE_USER = env('DATABASE_USER')
+DATABASE_PASSWORD = env('DATABASE_PASSWORD')
+DATABASE_HOST = env('DATABASE_HOST')
+DATABASE_PORT = env('DATABASE_PORT')
 
 # Application definition
 
@@ -73,9 +88,13 @@ WSGI_APPLICATION = 'bb_back.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,
+        'PORT': DATABASE_PORT or '5432',
+    },
 }
 
 # Password validation
