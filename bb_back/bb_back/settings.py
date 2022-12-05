@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.admin', 'django.contrib.auth',
     'django.contrib.contenttypes', 'django.contrib.sessions',
     'django.contrib.messages', 'django.contrib.staticfiles', 'bb_back',
-    'rest_framework_simplejwt', 'bb_back.core'
+    'rest_framework_simplejwt', 'bb_back.core', 'drf_yasg'
 ]
 
 MIDDLEWARE = [

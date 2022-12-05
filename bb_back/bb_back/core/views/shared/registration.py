@@ -1,3 +1,5 @@
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from pydantic import BaseModel, ValidationError, Field
 from rest_framework import status
@@ -25,13 +27,8 @@ class RegistrationResponseSchema(BaseRegistrationRequestSchema):
 
 
 class RegistrationUserView(APIView):
-    """
-    View to list all users in the system.
-
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
-
+    @swagger_auto_schema(method='post', request_body={})
+    @api_view(['POST'])
     def post(self, request):
         """
         Return a list of all users.
