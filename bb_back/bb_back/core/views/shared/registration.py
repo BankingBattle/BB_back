@@ -1,65 +1,69 @@
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.response import Response
+from rest_framework import serializers
 from rest_framework.views import APIView
-from pydantic import BaseModel, ValidationError, Field
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
 
 from bb_back.core.models import User
 
-from bb_back.core.utils.view_utils import response, parse_validation_error
+from bb_back.core.utils.view_utils import response
+from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
 
 
-class BaseRegistrationRequestSchema(BaseModel):
-    first_name: str = Field(..., max_length=30)
-    last_name: str = Field(..., max_length=30)
-    email: str = Field(..., max_length=63)
-    login: str = Field(..., max_length=30)
-    password: str = Field(..., max_length=30)
+class BaseRegistrationSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=30)
+    last_name = serializers.CharField(max_length=30)
+    email = serializers.CharField(max_length=63)
+    login = serializers.CharField(max_length=30)
+
+    class Meta:
+        fields = '__all__'
 
 
-class RegistrationRequestSchema(BaseRegistrationRequestSchema):
-    password: str = Field(..., max_length=30)
+class RegistrationRequestSerializer(BaseRegistrationSerializer):
+    password = serializers.CharField(max_length=30)
 
 
-class RegistrationResponseSchema(BaseRegistrationRequestSchema):
-    ...
+class RegistrationResponseSerializer(BaseResponseSerializer):
+    response_data = BaseRegistrationSerializer()
 
 
 class RegistrationUserView(APIView):
-    """
-    View to list all users in the system.
+    serializer_class = RegistrationResponseSerializer
 
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
-
+    @swagger_auto_schema(
+        request_body=RegistrationRequestSerializer,
+        responses={status.HTTP_200_OK: RegistrationResponseSerializer})
     def post(self, request):
-        """
-        Return a list of all users.
-        """
-        try:
-            user_schema = RegistrationRequestSchema.parse_obj(request.data)
-        except ValidationError as ex:
+
+        request_data = RegistrationRequestSerializer(data=request.data)
+        if not request_data.is_valid():
             return response(data={},
                             status_code=status.HTTP_400_BAD_REQUEST,
-                            message=parse_validation_error(ex))
-        if User.objects.filter(login=user_schema.login).exists():
+                            message="Provided data not valid")
+        user_schema = request_data.data
+        if User.objects.filter(login=user_schema.get("login")).exists():
             return response(
                 data={},
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=f"User with login {user_schema.login} already exists")
-        if User.objects.filter(email=user_schema.email).exists():
+                message=
+                f"User with login {user_schema.get('login')} already exists")
+        if User.objects.filter(email=user_schema.get("email")).exists():
             return response(
                 data={},
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=f"User with email {user_schema.email} already exists")
-        hashed_password = make_password(user_schema.password)
+                message=
+                f"User with email {user_schema.get('email')} already exists")
+        hashed_password = make_password(user_schema.get('password'))
 
-        user = User(first_name=user_schema.first_name,
-                    last_name=user_schema.last_name,
-                    login=user_schema.login,
-                    email=user_schema.email,
+        user = User(first_name=user_schema.get("first_name"),
+                    last_name=user_schema.get('last_name'),
+                    login=user_schema.get('login'),
+                    email=user_schema.get('email'),
                     password=hashed_password)
         user.save()
-        response_data = RegistrationResponseSchema(**user_schema.dict())
-        return response(data=response_data.dict(),
-                        message="User succesfully created")
+        response_data = RegistrationResponseSerializer(
+            data={"response_data": user_schema})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)

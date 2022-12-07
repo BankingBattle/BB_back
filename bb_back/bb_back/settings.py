@@ -35,7 +35,7 @@ SECRET_KEY = 'django-insecure-+40=5jx%s9kglkiq-me8%@&!iqd#j5eov%ho!@9ezcaxt7kfjb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: List[str] = []
+ALLOWED_HOSTS: List[str] = ['0.0.0.0', 'localhost']
 
 # Environs
 DATABASE_NAME = env('DATABASE_NAME')
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.admin', 'django.contrib.auth',
     'django.contrib.contenttypes', 'django.contrib.sessions',
     'django.contrib.messages', 'django.contrib.staticfiles', 'bb_back',
-    'rest_framework_simplejwt', 'bb_back.core'
+    'rest_framework_simplejwt', 'bb_back.core', 'drf_yasg'
 ]
 
 MIDDLEWARE = [
