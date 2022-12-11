@@ -1,6 +1,7 @@
 from datetime import datetime
+from datetime import timedelta
 from django.db import models
-from django.db.models import User
+from bb_back.core.models.user import User
 
 
 class Game(models.Model):
