@@ -6,3 +6,5 @@ env/
 __pycache__
 venv/
 ./venv/
+bb_back/data/
+bb_back/myvenv/

@@ -38,7 +38,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(f'{API_PREFIX}/{API_VERSION}/register',
-         views.RegistrationUserView.as_view()),
+         views.RegistrationUserView.as_view()  
     path(f'{API_PREFIX}/{API_VERSION}/token/',
          TokenObtainPairView.as_view(),
          name='token_obtain_pair'),
@@ -54,4 +54,8 @@ urlpatterns = [
     re_path(f'{API_PREFIX}/{API_VERSION}redoc/',
             schema_view.with_ui('redoc', cache_timeout=0),
             name='schema-redoc'),
+    path(f'{API_PREFIX}/{API_VERSION}/game/',
+         views.GameList.as_view(),
+         name='token_obtain_pair'),
+   
 ]

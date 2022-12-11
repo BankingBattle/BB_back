@@ -1,3 +1,3 @@
 from .registration import RegistrationUserView
-
-__all__ = ["RegistrationUserView"]
+from .games_list import GameList
+__all__ = ["RegistrationUserView,GameList"]

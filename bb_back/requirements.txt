@@ -3,7 +3,7 @@ backports.zoneinfo==0.2.1
 Django==4.1.3
 mccabe==0.7.0
 mypy-extensions==0.4.3
-pydantic==1.8.2
+pydantic==1.8.0
 sqlparse==0.4.3
 toml==0.10.2
 typing_extensions==4.4.0
