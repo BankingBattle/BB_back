@@ -24,7 +24,7 @@ jobs:
         # установка flake8 и его плагинов
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
         # установка зависимостей
-        pip install -r requirements.txt 
+        pip install -r ./bb_back/requirements.txt 
     - name: mypy
       run: mypy .
     - name: flake8
