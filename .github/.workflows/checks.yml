@@ -36,5 +36,5 @@ on:
           uses: actions/checkout@v2 
         - name: Set up Docker Buildx
           # Вызов сборщика контейнеров docker
-          uses: docker/setup-buildx-action@v1 
+          uses: docker/setup-buildx-action@v2
 
