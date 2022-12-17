@@ -1,0 +1,5 @@
+mypy==0.991
+flake8
+yapf==0.32.0
+django-stubs==1.13.0
+djangorestframework-stubs==1.8.0
