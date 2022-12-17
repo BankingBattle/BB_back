@@ -22,5 +22,5 @@ jobs:
       run: mypy .
     - name: flake8
       run: flake8 .
-    - name yapf
+    - name: yapf
       run: yapf . --recursive --diff
