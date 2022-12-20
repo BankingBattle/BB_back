@@ -62,6 +62,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             echo $PWD
+            cd ./BB_Back/
+            echo $PWD
             cd ./bb_back/
             docker-compose stop
             docker-compose rm bb_back_web
