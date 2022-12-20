@@ -61,8 +61,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo docker-compose stop
-            sudo docker-compose rm bb_back_web
+            docker-compose stop
+            docker-compose rm bb_back_web
             touch .env
             # echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             # echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -71,4 +71,4 @@ jobs:
             # echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             # echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             # echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            sudo docker-compose up -d 
+            docker-compose up -d 
