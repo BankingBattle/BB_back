@@ -61,6 +61,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            cd ./bb_back/
             docker-compose stop
             docker-compose rm bb_back_web
             touch .env
