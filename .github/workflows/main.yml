@@ -61,9 +61,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo $PWD
-            ls -la > 1.txt
-            cat 1.txt
+            cd /home/developer/workspace/BB_back/bb_back
             docker-compose stop
             docker-compose rm bb_back_web
             touch .env
