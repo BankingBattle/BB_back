@@ -3,8 +3,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /code
 COPY requirements.txt /code/
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install django-environ
 COPY . /code/
 RUN echo pip freeze
-CMD ["gunicorn", "bb_back.wsgi:application", "--bind", "0:8000" ]
+CMD ["python3", "manage.py", "runserver", "0:8000"] 
