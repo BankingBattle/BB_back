@@ -7,3 +7,4 @@ RUN pip install -r requirements.txt
 RUN pip install django-environ
 COPY . /code/
 RUN echo pip freeze
+CMD ["gunicorn", "bb_back.wsgi:application", "--bind", "0:8000" ]
