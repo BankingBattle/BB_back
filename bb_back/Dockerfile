@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install django-environ
 COPY . /code/
 RUN echo pip freeze
-CMD ["python3", "manage.py", "runserver", "0:8000"] 
+CMD ["gunicorn", "bb_back.wsgi:application", "--bind", "0:8000" ] 
