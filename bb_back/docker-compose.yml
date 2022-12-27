@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 services:
   db:
@@ -14,7 +14,6 @@ services:
     image: sterals/bb:latest 
     restart: always
     volumes:
-      - .:/code
       - static_value:/app/static/
       - media_value:/app/media/
     depends_on:
@@ -32,7 +31,7 @@ services:
       - "80:80"
 
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/:/etc/nginx/conf.d/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
 
