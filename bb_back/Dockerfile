@@ -7,6 +7,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install django-environ
 COPY . /code/
 RUN echo pip freeze
-ENTRYPOINT ["gunicorn", "bb_back.wsgi:application", "--bind", "0:8000" ] 
-CMD ["python", "manage.py", "makemigrations"]
-CMD ["python", "manage.py", "migrate"]
+CMD ["gunicorn", "bb_back.wsgi:application", "--bind", "0:8000" ]
