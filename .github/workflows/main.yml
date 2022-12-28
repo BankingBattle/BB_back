@@ -47,7 +47,7 @@ jobs:
         push: true
         context: ./bb_back/
         file: ./bb_back/Dockerfile
-        tags: ${{ secrets.DOCKER_USERNAME }}/yamdb:latest 
+        tags: ${{ secrets.DOCKER_USERNAME }}/bb:latest 
 
   deploy:
     runs-on: ubuntu-latest
