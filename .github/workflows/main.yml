@@ -71,6 +71,6 @@ jobs:
             # echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             # echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             # echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            docker-compose up -d 
+            docker-compose up -d --force-recreate
             # docker exec $(docker ps -aqf "name=deploy_web_1") "python manage.py makemigrations"
             # docker exec $(docker ps -aqf "name=deploy_web_1") "python manage.py migrate"
