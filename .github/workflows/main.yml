@@ -18,10 +18,10 @@ jobs:
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort pytest
         pip install -r ./bb_back/requirements.txt 
         pip install -r ./bb_back/requirements-dev.txt 
-    - name: mypy
-      run: mypy .
-    # - name: flake8
-    #   run: flake8 .
+    # - name: mypy
+    #   run: mypy .
+    - name: flake8
+      run: flake8 .
     # - name: yapf
     #   run: yapf . --recursive --diff
   build:
