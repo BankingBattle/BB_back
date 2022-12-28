@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
 from datetime import timedelta
-import environ
+from pathlib import Path
 from typing import List
+
+import environ
 
 env = environ.Env(
     # set casting, default value
@@ -30,7 +31,7 @@ environ.Env.read_env()
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+40=5jx%s9kglkiq-me8%@&!iqd#j5eov%ho!@9ezcaxt7kfjb'
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -103,7 +104,8 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME':
-        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        ('django.contrib.'
+        + 'auth.password_validation.UserAttributeSimilarityValidator'),
     },
     {
         'NAME':

@@ -64,7 +64,7 @@ jobs:
             cd /home/developer/deploy/
             docker-compose stop
             touch .env
-            # echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+            echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} >> .env
             # echo DB_NAME=${{ secrets.DB_NAME }} >> .env
             # echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
             # echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
