@@ -45,14 +45,14 @@ class RegistrationUserView(APIView):
             return response(
                 data={},
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=(f"User with login {user_schema.get('login')} " +
-                         "already exists"))
+                message=(f"User with login {user_schema.get('login')} "
+                         + "already exists"))
         if User.objects.filter(email=user_schema.get("email")).exists():
             return response(
                 data={},
                 status_code=status.HTTP_400_BAD_REQUEST,
-                message=(f"User with email {user_schema.get('email')} " +
-                         "already exists"))
+                message=(f"User with email {user_schema.get('email')} "
+                         + "already exists"))
         hashed_password = make_password(user_schema.get('password'))
 
         user = User(first_name=user_schema.get("first_name"),
