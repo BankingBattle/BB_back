@@ -22,7 +22,7 @@ jobs:
     # - name: mypy
     #   run: mypy .
     - name: flake8
-      run: flake8 .
+      run: flake8 . --append-config ~/bb_back/setup.cfg
     # - name: yapf
     #   run: yapf . --recursive --diff
   build:
