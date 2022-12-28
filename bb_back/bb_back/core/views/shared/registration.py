@@ -1,14 +1,11 @@
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework.response import Response
-from rest_framework import serializers
-from rest_framework.views import APIView
-from rest_framework import status
-from django.contrib.auth.hashers import make_password
-
 from bb_back.core.models import User
-
 from bb_back.core.utils.view_utils import response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
+from django.contrib.auth.hashers import make_password
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class BaseRegistrationSerializer(serializers.Serializer):
