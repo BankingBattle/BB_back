@@ -14,6 +14,7 @@ jobs:
         python-version: "3.8"
     - name: Install dependencies
       run: |
+        echo $PWD
         python -m pip install --upgrade pip 
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort pytest
         pip install -r ./bb_back/requirements.txt 
