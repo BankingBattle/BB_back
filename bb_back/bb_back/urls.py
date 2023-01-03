@@ -18,8 +18,7 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView, TokenVerifyView)
+
 
 from bb_back.core import views
 from bb_back.settings import API_PREFIX, API_VERSION
@@ -36,16 +35,17 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(f'{API_PREFIX}/{API_VERSION}/register',
+    path(f'{API_PREFIX}/{API_VERSION}/register/',
          views.RegistrationUserView.as_view()),
+    path(f'{API_PREFIX}/{API_VERSION}/user/me/', views.UserView.as_view()),
     path(f'{API_PREFIX}/{API_VERSION}/token/',
-         TokenObtainPairView.as_view(),
+         views.DecoratedTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
     path(f'{API_PREFIX}/{API_VERSION}/token/refresh/',
-         TokenRefreshView.as_view(),
+         views.DecoratedTokenRefreshView.as_view(),
          name='token_refresh'),
     path(f'{API_PREFIX}/{API_VERSION}/token/verify/',
-         TokenVerifyView.as_view(),
+         views.DecoratedTokenVerifyView.as_view(),
          name='token_verify'),
     re_path(f'{API_PREFIX}/{API_VERSION}/swagger/',
             schema_view.with_ui('swagger', cache_timeout=0),
