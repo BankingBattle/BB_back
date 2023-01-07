@@ -176,5 +176,5 @@ API_VERSION = "1.0.0"
 API_PREFIX = "api"
 
 SWAGGER_SETTINGS = {
-   'USE_SESSION_AUTH': False
+    'USE_SESSION_AUTH': False
 }
