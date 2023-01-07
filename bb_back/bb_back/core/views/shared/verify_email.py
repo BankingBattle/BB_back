@@ -1,5 +1,5 @@
-from rest_framework.views import APIView
 from django.utils import timezone
+from rest_framework.views import APIView
 
 from bb_back.core.models import EmailVerificationCode
 from bb_back.core.utils.view_utils import failed_validation_response, response
