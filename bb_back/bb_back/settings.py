@@ -182,3 +182,6 @@ EMAIL_HOST_USER = "banks.battle.info@gmail.com"
 EMAIL_HOST_PASSWORD = "henihyxbicyvxfgz"
 EMAIL_PORT = "587"
 EMAIL_USE_TLS = True
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False
+}
