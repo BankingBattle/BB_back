@@ -5,7 +5,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from bb_back.core.models import User
-from bb_back.core.utils.view_utils import response
+from bb_back.core.constants import EmailTypes
+from bb_back.core.utils.view_utils import response, failed_validation_response
+from bb_back.core.utils import EmailSender, is_valid_email
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
 
 
@@ -37,9 +39,7 @@ class RegistrationUserView(APIView):
 
         request_data = RegistrationRequestSerializer(data=request.data)
         if not request_data.is_valid():
-            return response(data={},
-                            status_code=status.HTTP_400_BAD_REQUEST,
-                            message="Provided data not valid")
+            return failed_validation_response(serializer=request_data)
         user_schema = request_data.data
         if User.objects.filter(login=user_schema.get("login")).exists():
             return response(
@@ -53,6 +53,13 @@ class RegistrationUserView(APIView):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 message=(f"User with email {user_schema.get('email')} " +
                          "already exists"))
+        if not is_valid_email(user_schema.get("email")):
+            return response(
+                data={},
+                status_code=status.HTTP_400_BAD_REQUEST,
+                message=
+                f"Registration failed: email {user_schema.get('email')} is not valid."
+            )
         hashed_password = make_password(user_schema.get('password'))
 
         user = User(first_name=user_schema.get("first_name"),
@@ -61,6 +68,12 @@ class RegistrationUserView(APIView):
                     email=user_schema.get('email'),
                     password=hashed_password)
         user.save()
+        EmailSender(to_users_emails=(user_schema.get('email'), ),
+                    email_type=EmailTypes.NEW_USER_GREETING_EMAIL).send_email(
+                        context=dict(user_login=user_schema.get('login'),
+                                     user_password=user_schema.get('password'),
+                                     email_verification_link=EmailSender.
+                                     get_mail_verification_link(user=user)))
         response_data = RegistrationResponseSerializer(
             data={"response_data": user_schema})
         response_data.is_valid()

@@ -19,7 +19,6 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-
 from bb_back.core import views
 from bb_back.settings import API_PREFIX, API_VERSION
 
@@ -53,4 +52,6 @@ urlpatterns = [
     re_path(f'{API_PREFIX}/{API_VERSION}/redoc/',
             schema_view.with_ui('redoc', cache_timeout=0),
             name='schema-redoc'),
+    path(f'{API_PREFIX}/{API_VERSION}/email/verify/',
+         views.VerifyEmailView.as_view()),
 ]

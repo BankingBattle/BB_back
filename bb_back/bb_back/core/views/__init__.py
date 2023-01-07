@@ -1,7 +1,8 @@
 from .shared import RegistrationUserView, DecoratedTokenRefreshView, DecoratedTokenVerifyView,\
-    DecoratedTokenObtainPairView, UserView
+    DecoratedTokenObtainPairView, UserView, VerifyEmailView
 
 __all__ = [
     "RegistrationUserView", "DecoratedTokenRefreshView",
-    "DecoratedTokenVerifyView", "DecoratedTokenObtainPairView", "UserView"
+    "DecoratedTokenVerifyView", "DecoratedTokenObtainPairView", "UserView",
+    "VerifyEmailView"
 ]

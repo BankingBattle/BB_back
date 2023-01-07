@@ -4,7 +4,7 @@ from rest_framework import serializers, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from bb_back.core.utils.view_utils import response
+from bb_back.core.utils.view_utils import failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
 
 
@@ -48,9 +48,7 @@ class UserView(APIView):
         user = request.user
         request_data = UpdateUserRequestSerializer(data=request.data)
         if not request_data.is_valid():
-            return response(data={},
-                            status_code=status.HTTP_400_BAD_REQUEST,
-                            message="Provided data not valid")
+            return failed_validation_response(serializer=request_data)
         data = request_data.data
         if data.get("first_name"):
             user.first_name = data.get("first_name")
