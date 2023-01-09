@@ -1,8 +1,7 @@
-from datetime import datetime
-
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.db import models
+from django.utils import timezone
 
 
 class CustomUserManager(BaseUserManager):
@@ -47,11 +46,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     login = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=255)
 
-    created_at = models.DateTimeField(default=datetime.now())
+    created_at = models.DateTimeField(default=timezone.now)
 
     is_staff = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    is_email_confirmed = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 

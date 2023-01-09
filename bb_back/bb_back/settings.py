@@ -124,7 +124,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':
     ('rest_framework_simplejwt.authentication.JWTAuthentication', )
 }
-
+SWAGGER_SETTINGS = {'USE_SESSION_AUTH': False}
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -167,6 +167,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+CORE_TEMPLATES_PATH = 'bb_back/core/templates'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -175,6 +176,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 API_VERSION = "1.0.0"
 API_PREFIX = "api"
 
+# Email settings
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "banks.battle.info@gmail.com"
+EMAIL_HOST_PASSWORD = "henihyxbicyvxfgz"
+EMAIL_PORT = "587"
+EMAIL_USE_TLS = True
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False
 }

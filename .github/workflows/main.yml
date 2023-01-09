@@ -17,7 +17,7 @@ jobs:
         echo $PWD
         ls
         python -m pip install --upgrade pip 
-        pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort pytest
+        # pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort pytest
         pip install -r ./bb_back/requirements.txt 
         pip install -r ./bb_back/requirements-dev.txt 
     # - name: mypy

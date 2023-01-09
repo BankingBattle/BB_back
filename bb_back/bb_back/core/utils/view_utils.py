@@ -1,7 +1,6 @@
 from typing import Optional
 
-from pydantic import ValidationError
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.response import Response
 
 
@@ -18,13 +17,23 @@ def response(data: dict,
     return Response(data=response_data, status=status.HTTP_200_OK)
 
 
-def parse_validation_error(ex: ValidationError):
-    """
-        Parses pydantic ValidationError
-        :return: Error message string
-        """
-    first_error = ex.errors().pop()
-    field = first_error['loc'][0],
-    msg = first_error['msg']
-
-    return f"Validation error: {field}: {msg}"
+def failed_validation_response(
+        serializer: Optional[serializers.Serializer] = None,
+        error: Optional[str] = None):
+    fail_validation_reason = "Some of the provided data was incorrect"
+    if not any([serializer, error]):
+        raise ValueError(
+            "At least one parameter should be provided: serializer or error")
+    if error:
+        fail_validation_reason = error
+    elif serializer:
+        fail_validation_reason = " ".join([
+            f"{key}: {[value[:] for value in values][0]}"
+            for key, values in serializer.errors.items()
+        ])
+    response_data: dict = dict(data=None,
+                               success=False,
+                               status_code=status.HTTP_400_BAD_REQUEST,
+                               message=fail_validation_reason,
+                               extra={})
+    return Response(data=response_data, status=status.HTTP_200_OK)
