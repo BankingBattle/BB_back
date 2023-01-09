@@ -178,10 +178,7 @@ API_PREFIX = "api"
 
 # Email settings
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "banks.battle.info@gmail.com"
-EMAIL_HOST_PASSWORD = "henihyxbicyvxfgz"
+EMAIL_HOST_USER = "banking.battle.info@gmail.com"
+EMAIL_HOST_PASSWORD = "qesvyewhhdgzefqk"
 EMAIL_PORT = "587"
 EMAIL_USE_TLS = True
-SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False
-}

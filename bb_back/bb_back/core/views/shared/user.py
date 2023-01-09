@@ -4,6 +4,8 @@ from rest_framework import serializers, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from bb_back.core.constants import EmailTypes
+from bb_back.core.utils import EmailSender
 from bb_back.core.utils.view_utils import failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
 
@@ -57,7 +59,12 @@ class UserView(APIView):
         if data.get("email"):
             user.email = data.get("email")
             user.is_email_confirmed = False
-            # Email sender
+            EmailSender(
+                to_users_emails=(data.get("email"), ),
+                email_type=EmailTypes.VERIFY_NEW_MAIL_ADDRESS_EMAIL
+            ).send_email(context=dict(
+                email_verification_link=EmailSender.get_mail_verification_link(
+                    user=user)))
         if data.get("password"):
             user.password = make_password(data.get("password"))
         user.save()
@@ -73,6 +80,8 @@ class UserView(APIView):
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        responses={status.HTTP_200_OK: GetUserResponseSerializer})
     def get(self, request):
         user = request.user
         response_data = GetUserResponseSerializer(data=dict(
@@ -82,6 +91,4 @@ class UserView(APIView):
                                login=user.login,
                                is_email_confirmed=user.is_email_confirmed)))
         response_data.is_valid()
-        print(response_data)
-        print(response_data.data)
         return Response(data=response_data.data, status=status.HTTP_200_OK)

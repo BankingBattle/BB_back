@@ -36,4 +36,4 @@ def failed_validation_response(
                                status_code=status.HTTP_400_BAD_REQUEST,
                                message=fail_validation_reason,
                                extra={})
-    return Response(data=response_data, status=status.HTTP_200_OK)
+    return Response(data=response_data, status=status.HTTP_400_BAD_REQUEST)

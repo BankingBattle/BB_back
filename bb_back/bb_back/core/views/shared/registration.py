@@ -70,9 +70,7 @@ class RegistrationUserView(APIView):
         user.save()
         EmailSender(to_users_emails=(user_schema.get('email'), ),
                     email_type=EmailTypes.NEW_USER_GREETING_EMAIL).send_email(
-                        context=dict(user_login=user_schema.get('login'),
-                                     user_password=user_schema.get('password'),
-                                     email_verification_link=EmailSender.
+                        context=dict(email_verification_link=EmailSender.
                                      get_mail_verification_link(user=user)))
         response_data = RegistrationResponseSerializer(
             data={"response_data": user_schema})

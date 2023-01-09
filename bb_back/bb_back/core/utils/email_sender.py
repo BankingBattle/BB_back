@@ -50,5 +50,5 @@ class EmailSender:
     def get_mail_verification_link(cls, user: User) -> str:
         verification_code = uid_hex()
         EmailVerificationCode.objects.create(user=user, code=verification_code)
-        link = f"{cls.TEMP_CONSTANT_LINK}/api/1.0.0/?code={verification_code}"
+        link = f"{cls.TEMP_CONSTANT_LINK}"
         return link
