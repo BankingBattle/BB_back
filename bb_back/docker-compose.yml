@@ -11,7 +11,7 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   web:
-    image: sterals/bb:latest 
+    image: sterals/bb:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -31,6 +31,7 @@ services:
       - "80:80"
 
     volumes:
+      - .:/code
       - ./nginx/:/etc/nginx/conf.d/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
