@@ -54,4 +54,8 @@ urlpatterns = [
             name='schema-redoc'),
     path(f'{API_PREFIX}/{API_VERSION}/email/verify/',
          views.VerifyEmailView.as_view()),
+    path(f'{API_PREFIX}/{API_VERSION}/game/', views.CreateGameView.as_view()),
+    # path(f'{API_PREFIX}/{API_VERSION}/game/', views.ListGameView.as_view()),
+    path(f'{API_PREFIX}/{API_VERSION}/game/<int:game_id>/',
+         views.GetGameView.as_view()),
 ]
