@@ -10,12 +10,15 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
-  web:
-    image: sterals/bb:latest 
-    restart: always
+  djangoapp:
+    build: .
     volumes:
-      - static_value:/code/static/
-      - media_value:/code/media/
+      - .:/opt/services/djangoapp/src
+      - static_volume:/opt/services/djangoapp/static
+      - media_volume:/opt/services/djangoapp/media
+    networks:
+      - nginx_network
+
     depends_on:
       - db
     ports:
@@ -24,20 +27,24 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
   nginx:
     image: nginx:1.21.3-alpine
-
     ports:
-      - "80:80"
-
+      - 80:80
     volumes:
-      - ./nginx/:/etc/nginx/conf.d/
-      - static_value:/static
-      - media_value:/var/html/media/
-
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/opt/services/djangoapp/static
+      - media_volume:/opt/services/djangoapp/media
     depends_on:
-      - web
+      - djangoapp
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge
 
 volumes:
-  static_value:
-  media_value:
+  static_volume:
+  media_volume:
