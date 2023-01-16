@@ -172,8 +172,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'bb_back', 'static'),
 ]
 
-## Serving the STATIC FILES
-# as declared in NginX conf, it must match /opt/services/djangoapp/static/
 STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)),
                            'static')
 
