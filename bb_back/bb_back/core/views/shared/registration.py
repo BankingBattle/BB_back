@@ -8,7 +8,7 @@ from bb_back.core.models import User
 from bb_back.core.constants import EmailTypes
 from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.utils import EmailSender, is_valid_email
-from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
+from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer
 
 
 class BaseRegistrationSerializer(serializers.Serializer):
@@ -22,7 +22,7 @@ class BaseRegistrationSerializer(serializers.Serializer):
 
 
 class RegistrationRequestSerializer(BaseRegistrationSerializer):
-    password = serializers.CharField(max_length=30)
+    password = serializers.CharField(max_length=30, min_length=8)
 
 
 class RegistrationResponseSerializer(BaseResponseSerializer):
@@ -32,9 +32,13 @@ class RegistrationResponseSerializer(BaseResponseSerializer):
 class RegistrationUserView(APIView):
     serializer_class = RegistrationResponseSerializer
 
-    @swagger_auto_schema(
-        request_body=RegistrationRequestSerializer,
-        responses={status.HTTP_200_OK: RegistrationResponseSerializer})
+    @swagger_auto_schema(request_body=RegistrationRequestSerializer,
+                         responses={
+                             status.HTTP_200_OK:
+                             RegistrationResponseSerializer,
+                             status.HTTP_400_BAD_REQUEST:
+                             BadRequestResponseSerializer
+                         })
     def post(self, request):
 
         request_data = RegistrationRequestSerializer(data=request.data)

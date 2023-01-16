@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from bb_back.core.constants import EmailTypes
 from bb_back.core.utils import EmailSender
 from bb_back.core.utils.view_utils import failed_validation_response
-from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
+from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer
 
 
 class BaseUpdateUserSerializer(serializers.Serializer):
@@ -43,9 +43,13 @@ class UserView(APIView):
     serializer_class = UpdateUserResponseSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
-    @swagger_auto_schema(
-        request_body=UpdateUserRequestSerializer,
-        responses={status.HTTP_200_OK: UpdateUserResponseSerializer})
+    @swagger_auto_schema(request_body=UpdateUserRequestSerializer,
+                         responses={
+                             status.HTTP_200_OK:
+                             UpdateUserResponseSerializer,
+                             status.HTTP_400_BAD_REQUEST:
+                             BadRequestResponseSerializer
+                         })
     def patch(self, request):
         user = request.user
         request_data = UpdateUserRequestSerializer(data=request.data)
