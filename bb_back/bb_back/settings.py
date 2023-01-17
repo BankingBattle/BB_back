@@ -174,6 +174,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)),
                            'static')
+CORE_TEMPLATES_PATH = 'bb_back/core/templates'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
