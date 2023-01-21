@@ -11,9 +11,12 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   web:
-    image: sterals/bb:latest
+    #  image: sterals/bb:latest
+    build: .
+    command: bash docker-entrypoint.sh
     restart: always
     volumes:
+      - .:/code
       - static_value:/app/static/
       - media_value:/app/media/
     depends_on:

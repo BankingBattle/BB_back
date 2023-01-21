@@ -62,5 +62,10 @@ urlpatterns = [
         name="schema-redoc",
     ),
     path(f"{API_PREFIX}/{API_VERSION}/email/verify/", views.VerifyEmailView.as_view()),
-    path(f"upload_resume/", views.VerifyEmailView.as_view(), name="files"),
+    path("upload_resume/", views.SubmitView.as_view(), name="files"),
+    re_path(
+        f"num_resume/",
+        views.ResView.as_view(),
+        name="num_resume",
+    ),
 ]
