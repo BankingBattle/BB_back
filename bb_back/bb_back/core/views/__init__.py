@@ -6,7 +6,6 @@ from .shared import (
     UserView,
     VerifyEmailView,
     SubmitView,
-    ResView,
 )
 
 __all__ = [
@@ -17,5 +16,4 @@ __all__ = [
     "UserView",
     "VerifyEmailView",
     "SubmitView",
-    "ResView",
 ]

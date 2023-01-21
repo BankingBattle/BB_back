@@ -192,7 +192,6 @@ EMAIL_PORT = "587"
 EMAIL_USE_TLS = True
 
 # Submit settings
+SUBMIT_MAX_SIZE = 50000000
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(
-    os.path.join(os.path.join(BASE_DIR, os.pardir), "app"), "media"
-)
+MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR, os.pardir), "media")

@@ -1,8 +1,7 @@
 from django.db import models
 
-# Создайте модели здесь.
-
 
 class Submit(models.Model):
-    file = models.FileField(upload_to="submit", null=True)
+    file = models.FileField(upload_to="submits", null=True)
     id_command = models.IntegerField(null=True)
+    round_num = models.IntegerField(null=True)

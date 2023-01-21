@@ -7,7 +7,6 @@ from .token import (
 from .user import UserView
 from .verify_email import VerifyEmailView
 from .submit_upload import SubmitView
-from .submit_upload import ResView
 
 __all__ = [
     "RegistrationUserView",
@@ -16,5 +15,5 @@ __all__ = [
     "DecoratedTokenObtainPairView",
     "UserView",
     "VerifyEmailView",
-    "SubmitView" "ResView",
+    "SubmitView",
 ]
