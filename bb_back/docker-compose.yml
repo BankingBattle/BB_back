@@ -19,6 +19,7 @@ services:
       - .:/code
       - static_value:/app/static/
       - media_value:/app/media/
+      - ./submits:/media/submits/
     depends_on:
       - db
     ports:
