@@ -39,7 +39,7 @@ class SubmitView(APIView):
     )
     def post(self, request):
         request_data = SubmitRequestSerializer(data=request.data)
-        if not request_data.is_valid() or request.FILES.get("file") == None:
+        if not request_data.is_valid() or request.FILES.get("file") is None:
             return failed_validation_response(serializer=request_data)
         submit_file = request.FILES.get("file")
         if submit_file.size > SUBMIT_MAX_SIZE:
