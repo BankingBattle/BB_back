@@ -25,7 +25,7 @@ from bb_back.settings import API_PREFIX, API_VERSION
 schema_view = get_schema_view(
     openapi.Info(
         title="BB back swagger",
-        default_version='v1.0.0',
+        default_version="v1.0.0",
         description="Banking Battle Backend",
     ),
     public=True,
@@ -33,29 +33,43 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path(f'{API_PREFIX}/{API_VERSION}/register/',
-         views.RegistrationUserView.as_view()),
-    path(f'{API_PREFIX}/{API_VERSION}/user/me/', views.UserView.as_view()),
-    path(f'{API_PREFIX}/{API_VERSION}/token/',
-         views.DecoratedTokenObtainPairView.as_view(),
-         name='token_obtain_pair'),
-    path(f'{API_PREFIX}/{API_VERSION}/token/refresh/',
-         views.DecoratedTokenRefreshView.as_view(),
-         name='token_refresh'),
-    path(f'{API_PREFIX}/{API_VERSION}/token/verify/',
-         views.DecoratedTokenVerifyView.as_view(),
-         name='token_verify'),
-    re_path(f'{API_PREFIX}/{API_VERSION}/swagger/',
-            schema_view.with_ui('swagger', cache_timeout=0),
-            name='schema-swagger-ui'),
-    re_path(f'{API_PREFIX}/{API_VERSION}/redoc/',
-            schema_view.with_ui('redoc', cache_timeout=0),
-            name='schema-redoc'),
-    path(f'{API_PREFIX}/{API_VERSION}/email/verify/',
-         views.VerifyEmailView.as_view()),
-    path(f'{API_PREFIX}/{API_VERSION}/game/', views.CreateGameView.as_view()),
+    path("admin/", admin.site.urls),
+    path(f"{API_PREFIX}/{API_VERSION}/register/", views.RegistrationUserView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/user/me/", views.UserView.as_view()),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/token/",
+        views.DecoratedTokenObtainPairView.as_view(),
+        name="token_obtain_pair",
+    ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/token/refresh/",
+        views.DecoratedTokenRefreshView.as_view(),
+        name="token_refresh",
+    ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/token/verify/",
+        views.DecoratedTokenVerifyView.as_view(),
+        name="token_verify",
+    ),
+    re_path(
+        f"{API_PREFIX}/{API_VERSION}/swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    re_path(
+        f"{API_PREFIX}/{API_VERSION}/redoc/",
+        schema_view.with_ui("redoc", cache_timeout=0),
+        name="schema-redoc",
+    ),
+    path(f"{API_PREFIX}/{API_VERSION}/email/verify/", views.VerifyEmailView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/game/", views.CreateGameView.as_view()),
     # path(f'{API_PREFIX}/{API_VERSION}/game/', views.ListGameView.as_view()),
-    path(f'{API_PREFIX}/{API_VERSION}/game/<int:game_id>/',
-         views.GetGameView.as_view()),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/game/<int:game_id>/", views.GetGameView.as_view()
+    ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/submit/upload/",
+        views.SubmitView.as_view(),
+        name="files",
+    ),
 ]
