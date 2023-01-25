@@ -9,6 +9,7 @@ from bb_back.core.constants import EmailTypes
 from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.utils import EmailSender, is_valid_email
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer
+from bb_back.settings import ADMIN_KEY
 
 
 class BaseRegistrationSerializer(serializers.Serializer):
@@ -23,6 +24,7 @@ class BaseRegistrationSerializer(serializers.Serializer):
 
 class RegistrationRequestSerializer(BaseRegistrationSerializer):
     password = serializers.CharField(max_length=30, min_length=8)
+    admin_key = serializers.CharField(max_length=255, allow_null=True)
 
 
 class RegistrationResponseSerializer(BaseResponseSerializer):
@@ -65,12 +67,13 @@ class RegistrationUserView(APIView):
                 f"Registration failed: email {user_schema.get('email')} is not valid."
             )
         hashed_password = make_password(user_schema.get('password'))
-
+        is_valid_admin_key = user_schema.get("admin_key") == ADMIN_KEY
         user = User(first_name=user_schema.get("first_name"),
                     last_name=user_schema.get('last_name'),
                     login=user_schema.get('login'),
                     email=user_schema.get('email'),
-                    password=hashed_password)
+                    password=hashed_password,
+                    is_staff=is_valid_admin_key)
         user.save()
         EmailSender(to_users_emails=(user_schema.get('email'), ),
                     email_type=EmailTypes.NEW_USER_GREETING_EMAIL).send_email(
