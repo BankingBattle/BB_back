@@ -18,16 +18,27 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EmailLog',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email_type', models.SmallIntegerField(default=bb_back.core.constants.EmailTypes['NONE_EMAIL'])),
+                ('id',
+                 models.BigAutoField(auto_created=True,
+                                     primary_key=True,
+                                     serialize=False,
+                                     verbose_name='ID')),
+                ('email_type',
+                 models.SmallIntegerField(
+                     default=bb_back.core.constants.EmailTypes['NONE_EMAIL'])),
                 ('receiver_email', models.CharField(max_length=63)),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
+                ('created_at',
+                 models.DateTimeField(default=django.utils.timezone.now)),
             ],
         ),
         migrations.CreateModel(
             name='Game',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.BigAutoField(auto_created=True,
+                                     primary_key=True,
+                                     serialize=False,
+                                     verbose_name='ID')),
                 ('name', models.CharField(max_length=63)),
                 ('description', models.TextField(null=True)),
                 ('is_active', models.BooleanField(default=True)),
@@ -36,7 +47,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Submit',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.BigAutoField(auto_created=True,
+                                     primary_key=True,
+                                     serialize=False,
+                                     verbose_name='ID')),
                 ('file', models.FileField(null=True, upload_to='submits')),
                 ('id_command', models.IntegerField(null=True)),
                 ('round_num', models.IntegerField(null=True)),
@@ -55,23 +70,42 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Round',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.BigAutoField(auto_created=True,
+                                     primary_key=True,
+                                     serialize=False,
+                                     verbose_name='ID')),
                 ('name', models.CharField(max_length=63)),
                 ('description', models.TextField(null=True)),
                 ('datetime_start', models.DateTimeField()),
                 ('datetime_end', models.DateTimeField()),
                 ('is_active', models.BooleanField(default=True)),
-                ('game', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='core.game')),
+                ('game',
+                 models.ForeignKey(
+                     null=True,
+                     on_delete=django.db.models.deletion.SET_NULL,
+                     to='core.game')),
             ],
         ),
         migrations.CreateModel(
             name='EmailVerificationCode',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.BigAutoField(auto_created=True,
+                                     primary_key=True,
+                                     serialize=False,
+                                     verbose_name='ID')),
                 ('code', models.CharField(max_length=32)),
-                ('expires_at', models.DateTimeField(default=bb_back.core.models.email.get_email_verification_code_expiration_datetime)),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
+                ('expires_at',
+                 models.DateTimeField(
+                     default=bb_back.core.models.email.
+                     get_email_verification_code_expiration_datetime)),
+                ('created_at',
+                 models.DateTimeField(default=django.utils.timezone.now)),
+                ('user',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.DO_NOTHING,
+                     to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

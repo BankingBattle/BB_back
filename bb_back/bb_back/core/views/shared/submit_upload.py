@@ -51,6 +51,7 @@ class SubmitView(APIView):
             round_num=submit_schema.get("round_num"),
         )
 
-        response_data = SubmitResponseSerializer(data={"response_data": submit_schema})
+        response_data = SubmitResponseSerializer(
+            data={"response_data": submit_schema})
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)

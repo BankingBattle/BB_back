@@ -19,9 +19,11 @@ jobs:
         python -m pip install --upgrade pip 
         # pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort pytest
         pip install -r ./bb_back/requirements.txt 
-        pip install -r ./bb_back/requirements-dev.txt 
-    # - name: mypy
-    #   run: mypy .
+        pip install -r ./bb_back/requirements-dev.txt
+    - name: yapf
+      run: yapf . --recursive --diff
+    - name: mypy
+      run: mypy .
     - name: flake8
       run: flake8 . --append-config ./bb_back/setup.cfg
 

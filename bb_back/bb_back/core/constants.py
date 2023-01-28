@@ -1,9 +1,8 @@
 from enum import IntEnum
-
-# Emails
 from typing import Dict
 
 
+# Emails
 class EmailTypes(IntEnum):
     NONE_EMAIL = 0
     VERIFY_NEW_MAIL_ADDRESS_EMAIL = 1
