@@ -23,6 +23,8 @@ jobs:
     - name: yapf
       run: yapf . --recursive --diff
     - name: flake8
+      run: echo $PWD
+      run: ls
       run: flake8 . --append-config setup.cfg
     - name: mypy
       run: mypy . --config-file ./setup.cfg
