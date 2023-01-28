@@ -21,15 +21,17 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
     - name: yapf
-      run: yapf . --recursive --diff
+      run: |
+        cd bb_back
+        yapf . --recursive --diff
     - name: flake8
       run: |
         cd bb_back
-        echo $PWD
-        cat setup.cfg
         flake8 . --append-config setup.cfg
     - name: mypy
-      run: mypy . --config-file ./setup.cfg
+      run: |
+        cd bb_back
+        mypy . --config-file setup.cfg
 
   build:
     runs-on: ubuntu-latest
