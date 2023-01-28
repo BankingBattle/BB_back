@@ -23,7 +23,7 @@ jobs:
     - name: yapf
       run: yapf . --recursive --diff
     - name: mypy
-      run: mypy .
+      run: mypy . --config-file ./bb_back/setup.cfg
     - name: flake8
       run: flake8 . --append-config ./bb_back/setup.cfg
 
