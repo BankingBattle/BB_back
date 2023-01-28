@@ -23,9 +23,9 @@ jobs:
     - name: yapf
       run: yapf . --recursive --diff
     - name: mypy
-      run: mypy .
+      run: mypy . --config-file ./setup.cfg
     - name: flake8
-      run: flake8 .
+      run: flake8 . --append-config setup.cfg
 
   build:
     runs-on: ubuntu-latest
