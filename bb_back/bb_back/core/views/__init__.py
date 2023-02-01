@@ -1,14 +1,7 @@
-from .shared import (
-    RegistrationUserView,
-    DecoratedTokenRefreshView,
-    DecoratedTokenVerifyView,
-    DecoratedTokenObtainPairView,
-    UserView,
-    VerifyEmailView,
-    CreateGameView,
-    GetGameView,
-    SubmitView,
-)
+from .shared import (RegistrationUserView, DecoratedTokenRefreshView,
+                     DecoratedTokenVerifyView, DecoratedTokenObtainPairView,
+                     UserView, VerifyEmailView, CreateGameView, GetGameView,
+                     SubmitView, view_404, GetGameLogoView, UploadGameLogoView)
 
 __all__ = [
     "RegistrationUserView",
@@ -20,4 +13,7 @@ __all__ = [
     "CreateGameView",
     "GetGameView",
     "SubmitView",
+    "view_404",
+    "GetGameLogoView",
+    "UploadGameLogoView",
 ]

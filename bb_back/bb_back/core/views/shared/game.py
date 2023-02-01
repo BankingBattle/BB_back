@@ -1,15 +1,19 @@
 from typing import List, Dict
 
+from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.admin.views.decorators import staff_member_required
+from drf_yasg import openapi
+from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 
 from bb_back.core.models import Game, Round
 from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer, \
     NotFoundResponseSerializer
+from bb_back.settings import SUBMIT_MAX_SIZE
 
 
 class GameRoundResponseSerializer(serializers.Serializer):
@@ -62,6 +66,10 @@ class GetGameResponsePrivateSerializer(serializers.Serializer):
 
 class GetGameResponseSerializer(BaseResponseSerializer):
     response_data = GetGameResponsePrivateSerializer()
+
+
+class UploadGameLogoResponseSerializer(BaseResponseSerializer):
+    response_data = serializers.JSONField(allow_null=True)
 
 
 class GameViewsHandler:
@@ -181,5 +189,64 @@ class GetGameView(APIView):
                               leaderboard=game_leaderboard)
         response_data = GetGameResponseSerializer(
             data={"response_data": inner_response})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+
+class GetGameLogoView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, game_id):
+        game = Game.objects.filter(id=game_id).first()
+        if not game:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Game with id = {game_id} does not exist.")
+        if not game.logo:
+            return response(status_code=status.HTTP_404_NOT_FOUND,
+                            data={},
+                            message=f"Game with id = {game_id} has no logo")
+        filename = game.logo.name.split('/')[-1]
+        resp = HttpResponse(game.logo, content_type='text/plain')
+        resp['Content-Disposition'] = f'attachment; filename={filename}'
+
+        return resp
+
+
+class UploadGameLogoView(APIView):
+    parser_classes = [MultiPartParser, FormParser, FileUploadParser]
+    permission_classes = (permissions.IsAuthenticated, )
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "file",
+                in_=openapi.IN_FORM,
+                description="file",
+                type=openapi.TYPE_FILE,
+                required=True,
+            )
+        ],
+        responses={status.HTTP_200_OK: UploadGameLogoResponseSerializer},
+    )
+    @staff_member_required
+    def put(self, request, game_id):
+        game = Game.objects.filter(id=game_id).first()
+        if not game:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Game with id = {game_id} does not exist.")
+        logo_file = request.FILES.get("file")
+        if logo_file.size > SUBMIT_MAX_SIZE:
+            return response(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                data={},
+                message=f"File size {logo_file.size} > {SUBMIT_MAX_SIZE}")
+        game.logo = logo_file
+
+        response_data = UploadGameLogoResponseSerializer(
+            data={"response_data": {}})
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)

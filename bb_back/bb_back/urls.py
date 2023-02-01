@@ -31,7 +31,7 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=[permissions.AllowAny],
 )
-
+handler404 = views.view_404
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(f"{API_PREFIX}/{API_VERSION}/register/",
@@ -67,9 +67,15 @@ urlpatterns = [
     path(f"{API_PREFIX}/{API_VERSION}/game/", views.CreateGameView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/game/<int:game_id>/",
          views.GetGameView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/game/logo/",
+         views.GetGameLogoView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/game/logo/<int:game_id>/",
+         views.UploadGameLogoView.as_view()),
     path(
         f"{API_PREFIX}/{API_VERSION}/submit/upload/",
         views.SubmitView.as_view(),
         name="files",
     ),
+    re_path(r'^.*/$', views.view_404,
+            name='error404'),  # regex for all endpoints. Has to be last.
 ]
