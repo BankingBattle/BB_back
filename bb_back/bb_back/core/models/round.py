@@ -8,5 +8,7 @@ class Round(models.Model):
 
     datetime_start = models.DateTimeField()
     datetime_end = models.DateTimeField()
-
+    
     is_active = models.BooleanField(default=True)
+
+    data = models.FileField(upload_to="round_data", null=True)

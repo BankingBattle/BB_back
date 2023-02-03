@@ -71,10 +71,15 @@ urlpatterns = [
          views.GetGameLogoView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/game/logo/<int:game_id>/",
          views.UploadGameLogoView.as_view()),
-    path(
-        f"{API_PREFIX}/{API_VERSION}/submit/upload/",
+    path(f"{API_PREFIX}/{API_VERSION}/submit/upload/",
         views.SubmitView.as_view(),
         name="files",
+    ),
+    path(f"{API_PREFIX}/{API_VERSION}/round/",
+        views.RoundView.as_view()
+    ),
+    path(f"{API_PREFIX}/{API_VERSION}/round/data/<int:round_id>/",
+        views.GetRoundDataView.as_view()
     ),
     re_path(r'^.*/$', views.view_404,
             name='error404'),  # regex for all endpoints. Has to be last.
