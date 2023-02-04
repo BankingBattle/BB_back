@@ -28,6 +28,7 @@ class CreateRoundRequestSerializer(serializers.Serializer):
 
 
 class RoundRequestSerializer(serializers.Serializer):
+    data = serializers.FileField()
     game_id = serializers.IntegerField()
     name = serializers.CharField(max_length=63)
     description = serializers.CharField()
@@ -36,8 +37,6 @@ class RoundRequestSerializer(serializers.Serializer):
     datetime_end = serializers.DateTimeField()
 
     is_active = serializers.BooleanField(default=True)
-
-    data = serializers.FileField()
 
 
 class RoundResponseSerializer(BaseResponseSerializer):
