@@ -79,7 +79,7 @@ urlpatterns = [
     path(
         f"{API_PREFIX}/{API_VERSION}/round/<int:round_id>/", views.RoundView.as_view()
     ),
-    path(f"{API_PREFIX}/{API_VERSION}/round/create", views.CreateRoundView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/round/create/", views.CreateRoundView.as_view()),
     path(
         f"{API_PREFIX}/{API_VERSION}/round/data/<int:round_id>/",
         views.GetRoundDataView.as_view(),
