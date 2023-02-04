@@ -34,8 +34,7 @@ schema_view = get_schema_view(
 handler404 = views.view_404
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(f"{API_PREFIX}/{API_VERSION}/register/",
-         views.RegistrationUserView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/register/", views.RegistrationUserView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/user/me/", views.UserView.as_view()),
     path(
         f"{API_PREFIX}/{API_VERSION}/token/",
@@ -62,25 +61,30 @@ urlpatterns = [
         schema_view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
-    path(f"{API_PREFIX}/{API_VERSION}/email/verify/",
-         views.VerifyEmailView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/email/verify/", views.VerifyEmailView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/game/", views.CreateGameView.as_view()),
-    path(f"{API_PREFIX}/{API_VERSION}/game/<int:game_id>/",
-         views.GetGameView.as_view()),
-    path(f"{API_PREFIX}/{API_VERSION}/game/logo/",
-         views.GetGameLogoView.as_view()),
-    path(f"{API_PREFIX}/{API_VERSION}/game/logo/<int:game_id>/",
-         views.UploadGameLogoView.as_view()),
-    path(f"{API_PREFIX}/{API_VERSION}/submit/upload/",
+    path(
+        f"{API_PREFIX}/{API_VERSION}/game/<int:game_id>/", views.GetGameView.as_view()
+    ),
+    path(f"{API_PREFIX}/{API_VERSION}/game/logo/", views.GetGameLogoView.as_view()),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/game/logo/<int:game_id>/",
+        views.UploadGameLogoView.as_view(),
+    ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/submit/upload/",
         views.SubmitView.as_view(),
         name="files",
     ),
-    path(f"{API_PREFIX}/{API_VERSION}/round/<int:round_id>/",
-        views.RoundView.as_view()
+    path(
+        f"{API_PREFIX}/{API_VERSION}/round/<int:round_id>/", views.RoundView.as_view()
     ),
-    path(f"{API_PREFIX}/{API_VERSION}/round/data/<int:round_id>/",
-        views.GetRoundDataView.as_view()
+    path(f"{API_PREFIX}/{API_VERSION}/round/create", views.CreateRoundView.as_view()),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/round/data/<int:round_id>/",
+        views.GetRoundDataView.as_view(),
     ),
-    re_path(r'^.*/$', views.view_404,
-            name='error404'),  # regex for all endpoints. Has to be last.
+    re_path(
+        r"^.*/$", views.view_404, name="error404"
+    ),  # regex for all endpoints. Has to be last.
 ]

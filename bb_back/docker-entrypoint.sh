@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Make database migrations
-#echo "Make database migrations"
-#python manage.py makemigrations;
+echo "Make database migrations"
+python manage.py makemigrations;
 
 # Apply database migrations
 echo "Apply database migrations"
