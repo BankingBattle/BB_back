@@ -116,7 +116,7 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} does not exist.",
             )
-            #TODO Хардкод, требуется сделать эендпоинт загрузки файла и вывод по данным из поля самого объекта
+            # TODO Хардкод, требуется сделать эендпоинт загрузки файла и вывод по данным из поля самого объекта
         file_path = os.path.join(MEDIA_ROOT,
                                  f"round-data/{round.game_id}/{round_id}.txt")
         if not os.path.exists(file_path):
