@@ -28,7 +28,7 @@ class CreateRoundRequestSerializer(serializers.Serializer):
 
 
 class RoundRequestSerializer(serializers.Serializer):
-    data = serializers.FileField()
+    round_data = serializers.FileField()
     game_id = serializers.IntegerField()
     name = serializers.CharField(max_length=63)
     description = serializers.CharField()
