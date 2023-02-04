@@ -65,24 +65,21 @@ class RoundView(APIView):
                 message=f"Round with id = {round_id} does not exist.",
             )
 
-        response_data = RoundResponseSerializer(
-            data=dict(
-                response_data=dict(
-                    id=round.id,
-                    name=round.name,
-                    description=round.description,
-                    datetime_start=round.datetime_start,
-                    datetime_end=round.datetime_end,
-                    is_active=round.is_active,
-                    game_id=round.game_id,
-                )
-            )
-        )
+        response_data = RoundResponseSerializer(data=dict(response_data=dict(
+            id=round.id,
+            name=round.name,
+            description=round.description,
+            datetime_start=round.datetime_start,
+            datetime_end=round.datetime_end,
+            is_active=round.is_active,
+            game_id=round.game_id,
+        )))
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
 
 
 class CreateRoundView(APIView):
+
     @swagger_auto_schema(
         request_body=CreateRoundRequestSerializer,
         responses={status.HTTP_201_CREATED: CreateRoundResponseSerializer},
@@ -102,10 +99,10 @@ class CreateRoundView(APIView):
             is_active=round_schema.get("is_active"),
         )
         response_data = CreateRoundResponseSerializer(
-            data={"response_data": round_schema}
-        )
+            data={"response_data": round_schema})
         response_data.is_valid()
-        return Response(data=response_data.data, status=status.HTTP_201_CREATED)
+        return Response(data=response_data.data,
+                        status=status.HTTP_201_CREATED)
 
 
 class GetRoundDataView(APIView):
@@ -120,8 +117,8 @@ class GetRoundDataView(APIView):
                 message=f"Round with id = {round_id} does not exist.",
             )
             #TODO Хардкод, требуется сделать эендпоинт загрузки файла и вывод по данным из поля самого объекта
-        file_path = os.path.join(
-            MEDIA_ROOT, f"round-data/{round.game_id}/{round_id}.txt")
+        file_path = os.path.join(MEDIA_ROOT,
+                                f"round-data/{round.game_id}/{round_id}.txt")
         if not os.path.exists(file_path):
             return response(
                 success=False,
@@ -133,10 +130,8 @@ class GetRoundDataView(APIView):
 
         file_stream = open(file_path, "rb")
         response_data = HttpResponse(file_stream.read(),
-                                     content_type="application/vnd.ms-excel"
-        )
+                                     content_type="application/vnd.ms-excel")
         response_data[
             "Content-Disposition"] = "inline; filename=" + os.path.basename(
-            file_path
-        )
+            file_path)
         return response_data
