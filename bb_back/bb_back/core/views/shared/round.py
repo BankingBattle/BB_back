@@ -49,13 +49,13 @@ class CreateRoundResponseSerializer(BaseResponseSerializer):
 
 
 class RoundView(APIView):
+
     @swagger_auto_schema(
         responses={
             status.HTTP_200_OK: RoundResponseSerializer,
             status.HTTP_400_BAD_REQUEST: BadRequestResponseSerializer,
             status.HTTP_404_NOT_FOUND: NotFoundResponseSerializer,
-        }
-    )
+        })
     def get(self, request, round_id):
         round = Round.objects.filter(id=round_id).first()
         if not round:
@@ -118,7 +118,7 @@ class GetRoundDataView(APIView):
             )
             #TODO Хардкод, требуется сделать эендпоинт загрузки файла и вывод по данным из поля самого объекта
         file_path = os.path.join(MEDIA_ROOT,
-                                f"round-data/{round.game_id}/{round_id}.txt")
+                                 f"round-data/{round.game_id}/{round_id}.txt")
         if not os.path.exists(file_path):
             return response(
                 success=False,
@@ -133,5 +133,5 @@ class GetRoundDataView(APIView):
                                      content_type="application/vnd.ms-excel")
         response_data[
             "Content-Disposition"] = "inline; filename=" + os.path.basename(
-            file_path)
+                file_path)
         return response_data
