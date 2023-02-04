@@ -21,7 +21,7 @@ class RoundRequestSerializer(serializers.Serializer):
 
     datetime_start = serializers.DateTimeField()
     datetime_end = serializers.DateTimeField()
-    
+
     is_active = serializers.BooleanField(default=True)
 
     data = serializers.FileField()
@@ -32,23 +32,35 @@ class RoundResponseSerializer(BaseResponseSerializer):
 
 
 class RoundView(APIView):
-     def get(self, request):
-        file_path = os.path.join(MEDIA_ROOT, "submits/pom.xml")
-        if os.path.exists(file_path):
-            fh = open(file_path, 'rb')
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-        return failed_validation_response(serializer=request_data)
+    def get(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+        response_data = RoundResponseSerializer(data={"response_data": round})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        request_body=RoundRequestSerializer,
+        responses={status.HTTP_200_OK: RoundResponseSerializer},
+    )
+    def post(self, request):
+        request_data = RoundRequestSerializer(data=request.data)
+        if not request_data.is_valid():
+            return failed_validation_response(serializer=request_data)
+        round_schema = request_data.data
+        round = Round.objects.create(name=round_schema.get("name"))
 
 
 class GetRoundDataView(APIView):
     def get(self, request, round_id):
         round = Round.objects.filter(id=round_id).first()
-        file_path = os.path.join(MEDIA_ROOT, f"round_data/{1}/{round_id}.txt")
+        file_path = os.path.join(
+            MEDIA_ROOT, f"round_data/{round.game.id}/{round_id}.txt"
+        )
         if os.path.exists(file_path):
-            fh = open(file_path, 'rb')
+            fh = open(file_path, "rb")
             response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            response["Content-Disposition"] = "inline; filename=" + os.path.basename(
+                file_path
+            )
             return response
         return failed_validation_response(serializer=request_data)
