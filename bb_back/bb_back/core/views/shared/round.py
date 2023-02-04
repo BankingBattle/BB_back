@@ -109,6 +109,7 @@ class CreateRoundView(APIView):
 
 
 class GetRoundDataView(APIView):
+
     def get(self, request, round_id):
         round = Round.objects.filter(id=round_id).first()
         if not round:
@@ -120,21 +121,22 @@ class GetRoundDataView(APIView):
             )
             #TODO Хардкод, требуется сделать эендпоинт загрузки файла и вывод по данным из поля самого объекта
         file_path = os.path.join(
-            MEDIA_ROOT, f"round-data/{round.game_id}/{round_id}.txt"
-        )
+            MEDIA_ROOT, f"round-data/{round.game_id}/{round_id}.txt")
         if not os.path.exists(file_path):
             return response(
                 success=False,
                 status_code=status.HTTP_404_NOT_FOUND,
                 data={},
-                message=f"Round with id = {round_id} has no data. Path to {file_path} does not exist",
+                message=
+                f"Round with id = {round_id} has no data. Path to {file_path} does not exist",
             )
 
         file_stream = open(file_path, "rb")
-        response_data = HttpResponse(
-            file_stream.read(), content_type="application/vnd.ms-excel"
+        response_data = HttpResponse(file_stream.read(),
+                                     content_type="application/vnd.ms-excel"
         )
-        response_data["Content-Disposition"] = "inline; filename=" + os.path.basename(
+        response_data[
+            "Content-Disposition"] = "inline; filename=" + os.path.basename(
             file_path
         )
         return response_data
