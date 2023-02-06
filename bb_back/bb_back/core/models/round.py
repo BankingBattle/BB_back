@@ -12,4 +12,4 @@ class Round(models.Model):
 
     is_active = models.BooleanField(default=True)
 
-    data = models.FileField(upload_to="round_data", null=True)
+    data_of_round = models.FileField(upload_to="round_data", null=True)
