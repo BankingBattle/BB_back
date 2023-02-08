@@ -87,5 +87,5 @@ urlpatterns = [
         views.GetRoundDataView.as_view(),
     ),
     re_path(r"^.*/$", views.view_404,
-            name="error404"),  # regex for all endpoints. Has to be last
+            name="error404"),  # regex for all endpoints. Has to be last.
 ]
