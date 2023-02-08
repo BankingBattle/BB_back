@@ -1,6 +1,7 @@
 from typing import List, Dict
 
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, permissions
 from rest_framework.response import Response
@@ -121,7 +122,7 @@ class CreateGameView(APIView):
                              status.HTTP_400_BAD_REQUEST:
                              BadRequestResponseSerializer
                          })
-    @staff_member_required
+    @method_decorator(staff_member_required)
     def post(self, request):
         request_data = CreateGameRequestSerializer(data=request.data)
         if not request_data.is_valid():
