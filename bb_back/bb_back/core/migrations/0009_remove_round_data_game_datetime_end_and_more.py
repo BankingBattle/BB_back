@@ -10,10 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='round',
-            name='data',
-        ),
         migrations.AddField(
             model_name='game',
             name='datetime_end',
