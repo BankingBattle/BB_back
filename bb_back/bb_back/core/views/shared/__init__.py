@@ -6,7 +6,7 @@ from .token import (
 )
 from .user import UserView
 from .verify_email import VerifyEmailView
-from .game import CreateGameView, GetGameView, GetGameLogoView, UploadGameLogoView
+from .game import CreateGameView, GameView, GetGameLogoView, UploadGameLogoView
 from .submit_upload import SubmitView
 from .view_404 import view_404
 from .round import RoundView
@@ -21,7 +21,7 @@ __all__ = [
     "UserView",
     "VerifyEmailView",
     "CreateGameView",
-    "GetGameView",
+    "GameView",
     "GetGameLogoView",
     "UploadGameLogoView",
     "SubmitView",

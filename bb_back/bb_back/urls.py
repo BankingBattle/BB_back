@@ -66,7 +66,7 @@ urlpatterns = [
          views.VerifyEmailView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/game/", views.CreateGameView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/game/<int:game_id>/",
-         views.GetGameView.as_view()),
+         views.GameView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/game/logo/",
          views.GetGameLogoView.as_view()),
     path(

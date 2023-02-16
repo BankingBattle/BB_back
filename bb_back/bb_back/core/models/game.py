@@ -6,4 +6,7 @@ class Game(models.Model):
     description = models.TextField(null=True)
     logo = models.FileField(upload_to="submits", null=True)
 
+    datetime_start = models.DateTimeField(null=True)
+    datetime_end = models.DateTimeField(null=True)
+
     is_active = models.BooleanField(default=True)

@@ -33,8 +33,11 @@ class GameLeaderboardResponseSerializer(serializers.Serializer):
 
 
 class ListGameResponsePrivateSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     name = serializers.CharField(allow_null=False)
     description = serializers.CharField(allow_null=True, allow_blank=True)
+    datetime_start = serializers.DateTimeField(allow_null=True, required=False)
+    datetime_end = serializers.DateTimeField(allow_null=True, required=False)
     rounds = GameRoundResponseSerializer(many=True)
     leaderboard = GameLeaderboardResponseSerializer(many=True)
 
@@ -47,11 +50,16 @@ class CreateGameRequestSerializer(serializers.Serializer):
     name = serializers.CharField(allow_null=False)
     description = serializers.CharField(allow_null=True, allow_blank=True)
 
+    datetime_start = serializers.DateTimeField(allow_null=True, required=False)
+    datetime_end = serializers.DateTimeField(allow_null=True, required=False)
+
 
 class CreateGameResponsePrivateSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
     name = serializers.CharField(allow_null=False)
     description = serializers.CharField(allow_null=True, allow_blank=True)
+    datetime_start = serializers.DateTimeField(allow_null=False)
+    datetime_end = serializers.DateTimeField(allow_null=False)
 
 
 class CreateGameResponseSerializer(BaseResponseSerializer):
@@ -59,8 +67,12 @@ class CreateGameResponseSerializer(BaseResponseSerializer):
 
 
 class GetGameResponsePrivateSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     name = serializers.CharField(allow_null=False)
     description = serializers.CharField(allow_null=True, allow_blank=True)
+    datetime_start = serializers.DateTimeField(allow_null=False,
+                                               required=False)
+    datetime_end = serializers.DateTimeField(allow_null=False, required=False)
     rounds = GameRoundResponseSerializer(many=True)
     leaderboard = GameLeaderboardResponseSerializer(many=True)
 
@@ -71,6 +83,22 @@ class GetGameResponseSerializer(BaseResponseSerializer):
 
 class UploadGameLogoResponseSerializer(BaseResponseSerializer):
     response_data = serializers.JSONField(allow_null=True)
+
+
+class UpdateGameRequestSerializer(serializers.Serializer):
+    name = serializers.CharField(allow_null=True, required=False)
+    description = serializers.CharField(allow_null=True,
+                                        allow_blank=True,
+                                        required=False)
+
+    datetime_start = serializers.DateTimeField(allow_null=True, required=False)
+    datetime_end = serializers.DateTimeField(allow_null=True, required=False)
+
+    is_active = serializers.BooleanField(allow_null=True, required=False)
+
+
+class UpdateGameResponseSerializer(GetGameResponseSerializer):
+    ...
 
 
 class GameViewsHandler:
@@ -134,14 +162,19 @@ class CreateGameView(APIView):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 message=(f'Game with name {game_schema.get("name")} ' +
                          'already exists'))
-        game = Game.objects.create(name=game_schema.get("name"),
-                                   description=game_schema.get("description"))
+        game = Game.objects.create(
+            name=game_schema.get("name"),
+            description=game_schema.get("description"),
+            datetime_start=game_schema.get("datetime_start"),
+            datetime_end=game_schema.get("datetime_end"))
 
         response_data = CreateGameResponseSerializer(data=dict(
             response_data=dict(
                 id=game.id,
                 name=game.name,
                 description=game.description,
+                datetime_start=game.datetime_start,
+                datetime_end=game.datetime_end,
             )))
         response_data.is_valid()
         return Response(data=response_data.data,
@@ -156,7 +189,10 @@ class CreateGameView(APIView):
             data={
                 "response_data": [
                     dict(name=game.name,
+                         id=game.id,
                          description=game.description,
+                         datetime_start=game.datetime_start,
+                         datetime_end=game.datetime_end,
                          rounds=GameViewsHandler.get_game_rounds(game=game),
                          leaderboard=GameViewsHandler.get_game_leaderboard(
                              game=game)) for game in games
@@ -166,7 +202,7 @@ class CreateGameView(APIView):
         return Response(data=response_data.data, status=status.HTTP_200_OK)
 
 
-class GetGameView(APIView):
+class GameView(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(
@@ -184,11 +220,61 @@ class GetGameView(APIView):
                 message=f"Game with id = {game_id} does not exist.")
         game_rounds = GameViewsHandler.get_game_rounds(game=game)
         game_leaderboard = GameViewsHandler.get_game_leaderboard(game=game)
-        inner_response = dict(name=game.name,
-                              description=game.description,
-                              rounds=game_rounds,
-                              leaderboard=game_leaderboard)
+        inner_response = dict(
+            id=game.id,
+            name=game.name,
+            description=game.description,
+            rounds=game_rounds,
+            leaderboard=game_leaderboard,
+            datetime_start=game.datetime_start,
+            datetime_end=game.datetime_end,
+        )
         response_data = GetGameResponseSerializer(
+            data={"response_data": inner_response})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=UpdateGameRequestSerializer,
+                         responses={
+                             status.HTTP_200_OK:
+                             UpdateGameResponseSerializer,
+                             status.HTTP_400_BAD_REQUEST:
+                             BadRequestResponseSerializer
+                         })
+    @method_decorator(staff_member_required)
+    def patch(self, request, game_id):
+        game = Game.objects.filter(id=game_id).first()
+        if not game:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Game with id = {game_id} does not exist.")
+
+        request_data = UpdateGameRequestSerializer(data=request.data)
+        if not request_data.is_valid():
+            return failed_validation_response(serializer=request_data)
+        data = request_data.data
+        if data.get("name"):
+            game.name = data.get("name")
+        if data.get("description"):
+            game.description = data.get("description")
+        if data.get("datetime_start"):
+            game.datetime_start = data.get("datetime_start")
+        if data.get("datetime_end"):
+            game.datetime_end = data.get("datetime_end")
+        if data.get("is_active") is not None:
+            game.is_active = data.get("is_active")
+        game.save()
+
+        inner_response = dict(
+            name=game.name,
+            description=game.description,
+            rounds=GameViewsHandler.get_game_rounds(game=game),
+            leaderboard=GameViewsHandler.get_game_leaderboard(game=game),
+            datetime_start=game.datetime_start,
+            datetime_end=game.datetime_end,
+        )
+        response_data = UpdateGameResponseSerializer(
             data={"response_data": inner_response})
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
