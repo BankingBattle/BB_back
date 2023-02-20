@@ -174,14 +174,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "/static/"
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_URL = '/static/django/'
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static/django/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/django')
+MEDIA_URL = '/media/django/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "bb_back", "static"),
-]
-
-STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)),
-                           "static")
 CORE_TEMPLATES_PATH = "bb_back/core/templates"
 
 # Default primary key field type
@@ -200,5 +198,3 @@ EMAIL_USE_TLS = True
 
 # Submit settings
 SUBMIT_MAX_SIZE = 50000000
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR, os.pardir), "media")

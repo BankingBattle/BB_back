@@ -18,8 +18,8 @@ services:
     volumes:
       - .:/code
       - .:/opt/services/djangoapp/src
-      - static_volume:/opt/services/djangoapp/static
-      - media_volume:/opt/services/djangoapp/media
+      - static_volume:/static/django/
+      - media_volume:/app/media/django/
       - ./submits:/media/submits/
       - ./round-data:/media/round-data/
     networks:
@@ -40,8 +40,8 @@ services:
       - 80:80
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d
-      - static_volume:/opt/services/djangoapp/static
-      - media_volume:/opt/services/djangoapp/media
+      - static_volume:/var/html/static/django
+      - media_volume:/var/html/media/django/
     depends_on:
       - djangoapp
     networks:
