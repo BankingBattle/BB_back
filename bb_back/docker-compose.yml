@@ -9,22 +9,13 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    networks:
-      - nginx_network
 
-  djangoapp:
-    build: .
+  web:
+    image: sterals/bb:latest 
     restart: always
     volumes:
-      - .:/code
-      - .:/opt/services/djangoapp/src
-      - static_volume:/static/django/
-      - media_volume:/app/media/django/
-      - ./submits:/media/submits/
-      - ./round-data:/media/round-data/
-    networks:
-      - nginx_network
-
+      - static_volume:/code/bb_back/static/django
+      - media_volume:/code/bb_back/media/django
     depends_on:
       - db
     ports:
@@ -33,23 +24,22 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-
   nginx:
     image: nginx:1.21.3-alpine
+
     ports:
-      - 80:80
+      - "80:80"
+      - "443:443"
+
     volumes:
-      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/:/etc/nginx/conf.d/
+      - /home/developer/deploy/front/static/:/usr/share/nginx/html/
+      - /etc/ssl/bankingbattle/:/etc/ssl/bankingbattle/
       - static_volume:/var/html/static/django
       - media_volume:/var/html/media/django/
-    depends_on:
-      - djangoapp
-    networks:
-      - nginx_network
 
-networks:
-  nginx_network:
-    driver: bridge
+    depends_on:
+      - web
 
 volumes:
   static_volume:
