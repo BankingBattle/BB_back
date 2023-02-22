@@ -104,7 +104,7 @@ class UpdateGameResponseSerializer(GetGameResponseSerializer):
 class GameViewsHandler:
 
     @staticmethod
-    def get_game_rounds(game: Game) -> List[GameRoundResponseSerializer]:
+    def get_game_rounds(game: Game) -> List[Dict]:
         game_rounds = Round.objects.filter(game=game)
         serialized_rounds = [
             GameRoundResponseSerializer(
