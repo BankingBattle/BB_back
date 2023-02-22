@@ -105,7 +105,7 @@ class GameViewsHandler:
 
     @staticmethod
     def get_game_rounds(game: Game) -> List[Dict]:
-        game_rounds = Round.objects.filter(game=game)
+        game_rounds = Round.objects.filter(game=game, is_active=True)
         serialized_rounds = [
             GameRoundResponseSerializer(
                 data=dict(id=round.id,

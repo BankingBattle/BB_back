@@ -1,19 +1,22 @@
-from rest_framework import serializers, status
-from rest_framework.views import APIView
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework.response import Response
-from django.http import HttpResponse
-from bb_back.core.utils.view_utils import response, failed_validation_response
 import os
 
-from bb_back.core.models import Round
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from bb_back.core.models import Game
-from bb_back.settings import MEDIA_ROOT
+from bb_back.core.models import Round
+from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import (
     BaseResponseSerializer,
     BadRequestResponseSerializer,
     NotFoundResponseSerializer,
 )
+from bb_back.settings import MEDIA_ROOT
 
 
 class CreateRoundRequestSerializer(serializers.Serializer):
@@ -70,6 +73,14 @@ class UpdateRoundResponsePrivateSerializer(serializers.Serializer):
 
 class UpdateRoundResponseSerialier(BaseResponseSerializer):
     response_data = UpdateRoundResponsePrivateSerializer()
+
+
+class DeleteRoundResponsePrivateSerializer(serializers.Serializer):
+    success = serializers.BooleanField()
+
+
+class DeleteRoundResponseSerializer(BaseResponseSerializer):
+    response_data = DeleteRoundResponsePrivateSerializer()
 
 
 class RoundView(APIView):
@@ -142,6 +153,33 @@ class RoundView(APIView):
             is_active=round.is_active,
             game_id=round.game_id,
         )))
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=UpdateRoundRequestSerializer,
+                         responses={
+                             status.HTTP_200_OK:
+                             DeleteRoundResponsePrivateSerializer,
+                             status.HTTP_400_BAD_REQUEST:
+                             BadRequestResponseSerializer,
+                             status.HTTP_404_NOT_FOUND:
+                             NotFoundResponseSerializer,
+                         })
+    @method_decorator(staff_member_required)
+    def delete(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+        round.is_active = False
+        round.save()
+
+        response_data = CreateRoundResponseSerializer(
+            data={"response_data": {
+                "success": True
+            }})
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
 

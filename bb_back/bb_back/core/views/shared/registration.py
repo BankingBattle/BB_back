@@ -4,10 +4,10 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from bb_back.core.models import User
 from bb_back.core.constants import EmailTypes
-from bb_back.core.utils.view_utils import response, failed_validation_response
+from bb_back.core.models import User
 from bb_back.core.utils import EmailSender, is_valid_email
+from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer
 from bb_back.settings import ADMIN_KEY
 
