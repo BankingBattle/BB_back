@@ -24,7 +24,9 @@ class BaseRegistrationSerializer(serializers.Serializer):
 
 class RegistrationRequestSerializer(BaseRegistrationSerializer):
     password = serializers.CharField(max_length=30, min_length=8)
-    admin_key = serializers.CharField(max_length=255, allow_null=True)
+    admin_key = serializers.CharField(max_length=255,
+                                      allow_null=True,
+                                      required=False)
 
 
 class RegistrationResponseSerializer(BaseResponseSerializer):
