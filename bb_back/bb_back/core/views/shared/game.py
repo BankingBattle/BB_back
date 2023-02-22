@@ -114,7 +114,9 @@ class GameViewsHandler:
                           datetime_end=round.datetime_end))
             for round in game_rounds
         ]
-        return serialized_rounds
+        for round_data in serialized_rounds:
+            round_data.is_valid()
+        return [round_data.data for round_data in serialized_rounds]
 
     @staticmethod
     def get_game_leaderboard(game: Game) -> List[Dict]:
