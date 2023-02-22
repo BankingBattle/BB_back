@@ -36,7 +36,7 @@ class RoundRequestSerializer(serializers.Serializer):
     datetime_start = serializers.DateTimeField()
     datetime_end = serializers.DateTimeField()
 
-    is_active = serializers.BooleanField(default=True)
+    is_active = serializers.BooleanField()
 
 
 class RoundResponseSerializer(BaseResponseSerializer):
@@ -45,6 +45,31 @@ class RoundResponseSerializer(BaseResponseSerializer):
 
 class CreateRoundResponseSerializer(BaseResponseSerializer):
     response_data = CreateRoundRequestSerializer()
+
+
+class UpdateRoundRequestSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=63, required=False)
+    description = serializers.CharField(required=False)
+
+    datetime_start = serializers.DateTimeField(required=False)
+    datetime_end = serializers.DateTimeField(required=False)
+
+    is_active = serializers.BooleanField(default=True)
+
+
+class UpdateRoundResponsePrivateSerializer(serializers.Serializer):
+    game_id = serializers.IntegerField()
+    name = serializers.CharField(max_length=63)
+    description = serializers.CharField()
+
+    datetime_start = serializers.DateTimeField()
+    datetime_end = serializers.DateTimeField()
+
+    is_active = serializers.BooleanField()
+
+
+class UpdateRoundResponseSerialier(BaseResponseSerializer):
+    response_data = UpdateRoundResponsePrivateSerializer()
 
 
 class RoundView(APIView):
@@ -63,6 +88,50 @@ class RoundView(APIView):
                 data={},
                 message=f"Round with id = {round_id} does not exist.",
             )
+
+        response_data = RoundResponseSerializer(data=dict(response_data=dict(
+            id=round.id,
+            name=round.name,
+            description=round.description,
+            datetime_start=round.datetime_start,
+            datetime_end=round.datetime_end,
+            is_active=round.is_active,
+            game_id=round.game_id,
+        )))
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=UpdateRoundRequestSerializer,
+                         responses={
+                             status.HTTP_200_OK: RoundResponseSerializer,
+                             status.HTTP_400_BAD_REQUEST:
+                             BadRequestResponseSerializer,
+                             status.HTTP_404_NOT_FOUND:
+                             NotFoundResponseSerializer,
+                         })
+    def patch(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+        request_data = UpdateRoundRequestSerializer(data=request.data)
+
+        if not request_data.is_valid():
+            return failed_validation_response(serializer=request_data)
+        data = request_data.data
+        if data.get("name"):
+            round.name = data.get("name")
+        if data.get("description"):
+            round.description = data.get("description")
+        if data.get("datetime_start"):
+            round.datetime_start = data.get("datetime_start")
+        if data.get("datetime_end"):
+            round.datetime_end = data.get("datetime_end")
+        if data.get("is_active") is not None:
+            round.is_active = data.get("is_active")
+        round.save()
 
         response_data = RoundResponseSerializer(data=dict(response_data=dict(
             id=round.id,

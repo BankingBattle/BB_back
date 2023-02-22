@@ -45,11 +45,18 @@ class SubmitView(APIView):
         if submit_file.size > SUBMIT_MAX_SIZE:
             return failed_validation_response(serializer=request_data)
         submit_schema = request_data.data
-        Submit.objects.create(
-            file=submit_file,
+        submit = Submit.objects.filter(
             id_command=submit_schema.get("id_command"),
-            round_num=submit_schema.get("round_num"),
-        )
+            round_num=submit_schema.get("round_num")).first()
+        if submit:
+            submit.file = submit_file
+            submit.save()
+        else:
+            Submit.objects.create(
+                file=submit_file,
+                id_command=submit_schema.get("id_command"),
+                round_num=submit_schema.get("round_num"),
+            )
 
         response_data = SubmitResponseSerializer(
             data={"response_data": submit_schema})
