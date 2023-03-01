@@ -13,8 +13,8 @@ from bb_back.settings import ADMIN_KEY
 
 
 class BaseRegistrationSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=30)
-    last_name = serializers.CharField(max_length=30)
+    first_name = serializers.CharField(max_length=30, required=False)
+    last_name = serializers.CharField(max_length=30, required=False)
     email = serializers.CharField(max_length=63)
     login = serializers.CharField(max_length=30)
 
