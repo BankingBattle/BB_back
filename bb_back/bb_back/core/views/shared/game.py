@@ -1,19 +1,19 @@
 from typing import List, Dict
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
-from django.utils.decorators import method_decorator
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, permissions
+from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.admin.views.decorators import staff_member_required
-from drf_yasg import openapi
-from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 
 from bb_back.core.models import Game, Round
 from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer, \
-    NotFoundResponseSerializer
+    NotFoundResponseSerializer, UserRolePermissionDeniedSerializer
+from bb_back.core.views.utils.decorators import is_staff_user
 from bb_back.settings import SUBMIT_MAX_SIZE
 
 
@@ -150,9 +150,11 @@ class CreateGameView(APIView):
                              status.HTTP_201_CREATED:
                              CreateGameResponseSerializer,
                              status.HTTP_400_BAD_REQUEST:
-                             BadRequestResponseSerializer
+                             BadRequestResponseSerializer,
+                             status.HTTP_403_FORBIDDEN:
+                             UserRolePermissionDeniedSerializer
                          })
-    @method_decorator(staff_member_required)
+    @is_staff_user
     def post(self, request):
         request_data = CreateGameRequestSerializer(data=request.data)
         if not request_data.is_valid():
@@ -241,9 +243,11 @@ class GameView(APIView):
                              status.HTTP_200_OK:
                              UpdateGameResponseSerializer,
                              status.HTTP_400_BAD_REQUEST:
-                             BadRequestResponseSerializer
+                             BadRequestResponseSerializer,
+                             status.HTTP_403_FORBIDDEN:
+                             UserRolePermissionDeniedSerializer
                          })
-    @method_decorator(staff_member_required)
+    @is_staff_user
     def patch(self, request, game_id):
         game = Game.objects.filter(id=game_id).first()
         if not game:

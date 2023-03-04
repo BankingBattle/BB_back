@@ -1,8 +1,6 @@
 import os
 
-from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
-from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status
 from rest_framework.response import Response
@@ -15,7 +13,9 @@ from bb_back.core.views.utils.base_serializers import (
     BaseResponseSerializer,
     BadRequestResponseSerializer,
     NotFoundResponseSerializer,
+    UserRolePermissionDeniedSerializer,
 )
+from bb_back.core.views.utils.decorators import is_staff_user
 from bb_back.settings import MEDIA_ROOT
 
 
@@ -164,8 +164,10 @@ class RoundView(APIView):
                              BadRequestResponseSerializer,
                              status.HTTP_404_NOT_FOUND:
                              NotFoundResponseSerializer,
+                             status.HTTP_403_FORBIDDEN:
+                             UserRolePermissionDeniedSerializer
                          })
-    @method_decorator(staff_member_required)
+    @is_staff_user
     def delete(self, request, round_id):
         round = Round.objects.filter(id=round_id).first()
         if not round:

@@ -25,3 +25,8 @@ class NotFoundResponseSerializer(serializers.Serializer):
     status_code = serializers.IntegerField(default=status.HTTP_404_NOT_FOUND)
     message = serializers.CharField(default=None, required=False)
     extra = serializers.JSONField(default={})
+
+
+class UserRolePermissionDeniedSerializer(serializers.Serializer):
+    detail = serializers.CharField(
+        default="You do not have permission to perform this action.")
