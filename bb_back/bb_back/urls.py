@@ -86,6 +86,10 @@ urlpatterns = [
         f"{API_PREFIX}/{API_VERSION}/round/data/<int:round_id>/",
         views.GetRoundDataView.as_view(),
     ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/round/uploud_data/<int:round_id>/",
+        views.UploudRoundData.as_view(),
+    ),
     re_path(r"^.*/$", views.view_404,
             name="error404"),  # regex for all endpoints. Has to be last.
 ]

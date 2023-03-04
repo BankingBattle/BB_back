@@ -7,6 +7,9 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
+from bb_back.settings import SUBMIT_MAX_SIZE
+from drf_yasg import openapi
 
 from bb_back.core.models import Game
 from bb_back.core.models import Round
@@ -59,6 +62,9 @@ class UpdateRoundRequestSerializer(serializers.Serializer):
 
     is_active = serializers.BooleanField(default=True)
 
+class UploadRoundDataRequestSerializer(serializers.Serializer):
+    data_of_round = serializers.FileField()
+
 
 class UpdateRoundResponsePrivateSerializer(serializers.Serializer):
     game_id = serializers.IntegerField()
@@ -70,8 +76,10 @@ class UpdateRoundResponsePrivateSerializer(serializers.Serializer):
 
     is_active = serializers.BooleanField()
 
+class UploadRoundDataResponseSerializer(BaseResponseSerializer):
+    response_data = serializers.FileField()
 
-class UpdateRoundResponseSerialier(BaseResponseSerializer):
+class UpdateRoundResponseSerializer(BaseResponseSerializer):
     response_data = UpdateRoundResponsePrivateSerializer()
 
 
@@ -222,22 +230,56 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} does not exist.",
             )
-            # TODO Хардкод, требуется сделать эендпоинт загрузки файла и вывод по данным из поля самого объекта
-        file_path = os.path.join(MEDIA_ROOT,
-                                 f"round-data/{round.game_id}/{round_id}.txt")
-        if not os.path.exists(file_path):
+        if not round.data_of_round:
             return response(
                 success=False,
                 status_code=status.HTTP_404_NOT_FOUND,
                 data={},
                 message=
-                f"Round with id = {round_id} has no data. Path to {file_path} does not exist",
+                f"Round with id = {round_id} has no data.",
             )
-
-        file_stream = open(file_path, "rb")
-        response_data = HttpResponse(file_stream.read(),
+    
+        response_data = HttpResponse(round.data_of_round,
                                      content_type="application/vnd.ms-excel")
         response_data[
-            "Content-Disposition"] = "inline; filename=" + os.path.basename(
-                file_path)
+            "Content-Disposition"] = "inline; filename=" + round.data_of_round.name
         return response_data
+    
+class UploudRoundData(APIView):
+    parser_classes = [MultiPartParser, FormParser, FileUploadParser]
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "file",
+                in_=openapi.IN_FORM,
+                description="file",
+                type=openapi.TYPE_FILE,
+                required=True,
+            )
+        ],
+         responses={status.HTTP_200_OK: UploadRoundDataResponseSerializer},
+    )
+    def put(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+        
+        data_file = request.FILES.get("file")
+
+        if data_file.size > SUBMIT_MAX_SIZE:
+            return response(
+                status_code=
+                status.HTTP_400_BAD_REQUEST,
+                data={},
+                message=f"File size {data_file.size} > {SUBMIT_MAX_SIZE}")
+        
+        round.data_of_round = data_file
+        round.save()
+        response_data = UploadRoundDataResponseSerializer(
+            data={"response_data": {}})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)    

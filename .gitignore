@@ -9,3 +9,4 @@ venv/
 bb_back/data
 bb_back/submits/
 bb_back/round-data/
+bb_back/media/django/
