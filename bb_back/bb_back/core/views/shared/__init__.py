@@ -12,6 +12,7 @@ from .view_404 import view_404
 from .round import RoundView
 from .round import GetRoundDataView
 from .round import CreateRoundView
+from .round import UploudRoundData
 
 __all__ = [
     "RegistrationUserView",
@@ -29,4 +30,5 @@ __all__ = [
     "RoundView",
     "GetRoundDataView",
     "CreateRoundView",
+    "UploudRoundData"
 ]
