@@ -15,20 +15,9 @@ from .round import CreateRoundView
 from .round import UploudRoundData
 
 __all__ = [
-    "RegistrationUserView",
-    "DecoratedTokenRefreshView",
-    "DecoratedTokenVerifyView",
-    "DecoratedTokenObtainPairView",
-    "UserView",
-    "VerifyEmailView",
-    "CreateGameView",
-    "GameView",
-    "GetGameLogoView",
-    "UploadGameLogoView",
-    "SubmitView",
-    "view_404",
-    "RoundView",
-    "GetRoundDataView",
-    "CreateRoundView",
-    "UploudRoundData"
+    "RegistrationUserView", "DecoratedTokenRefreshView",
+    "DecoratedTokenVerifyView", "DecoratedTokenObtainPairView", "UserView",
+    "VerifyEmailView", "CreateGameView", "GameView", "GetGameLogoView",
+    "UploadGameLogoView", "SubmitView", "view_404", "RoundView",
+    "GetRoundDataView", "CreateRoundView", "UploudRoundData"
 ]
