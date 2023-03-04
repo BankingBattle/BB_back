@@ -143,7 +143,7 @@ class GameViewsHandler:
 
 
 class CreateGameView(APIView):
-   # permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(request_body=CreateGameRequestSerializer,
                          responses={
