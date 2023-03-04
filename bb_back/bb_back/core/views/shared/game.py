@@ -143,7 +143,7 @@ class GameViewsHandler:
 
 
 class CreateGameView(APIView):
-   # permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(request_body=CreateGameRequestSerializer,
                          responses={
@@ -152,7 +152,7 @@ class CreateGameView(APIView):
                              status.HTTP_400_BAD_REQUEST:
                              BadRequestResponseSerializer
                          })
-   # @method_decorator(staff_member_required)
+    @method_decorator(staff_member_required)
     def post(self, request):
         request_data = CreateGameRequestSerializer(data=request.data)
         if not request_data.is_valid():
