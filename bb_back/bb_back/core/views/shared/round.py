@@ -1,4 +1,3 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status
@@ -17,8 +16,7 @@ from bb_back.core.views.utils.base_serializers import (
     NotFoundResponseSerializer,
     UserRolePermissionDeniedSerializer,
 )
-from bb_back.settings import MEDIA_ROOT
-
+from bb_back.core.views.utils.decorators import is_staff_user
 
 class CreateRoundRequestSerializer(serializers.Serializer):
     game_id = serializers.IntegerField()
