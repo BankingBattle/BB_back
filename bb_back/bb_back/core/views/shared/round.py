@@ -18,6 +18,7 @@ from bb_back.core.views.utils.base_serializers import (
 )
 from bb_back.core.views.utils.decorators import is_staff_user
 
+
 class CreateRoundRequestSerializer(serializers.Serializer):
     game_id = serializers.IntegerField()
     name = serializers.CharField(max_length=63)
