@@ -1,5 +1,3 @@
-import os
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
@@ -19,7 +17,6 @@ from bb_back.core.views.utils.base_serializers import (
     BadRequestResponseSerializer,
     NotFoundResponseSerializer,
 )
-from bb_back.settings import MEDIA_ROOT
 
 
 class CreateRoundRequestSerializer(serializers.Serializer):
