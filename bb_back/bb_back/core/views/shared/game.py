@@ -20,6 +20,7 @@ from bb_back.settings import SUBMIT_MAX_SIZE
 class GameRoundResponseSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField(required=False)
+    description = serializers.CharField(required=False)
     datetime_start = serializers.DateTimeField()
     datetime_end = serializers.DateTimeField()
 
@@ -110,6 +111,7 @@ class GameViewsHandler:
             GameRoundResponseSerializer(
                 data=dict(id=round.id,
                           name=round.name,
+                          description=round.description,
                           datetime_start=round.datetime_start,
                           datetime_end=round.datetime_end))
             for round in game_rounds
