@@ -3,7 +3,9 @@ from .email import EmailLog, EmailVerificationCode
 from .game import Game
 from .round import Round
 from .submit import Submit
+from .team import Team
+from .team_application import TeamApplication
 
 __all__ = [
-    "User", "EmailLog", "EmailVerificationCode", "Game", "Round", "Submit"
+    "User", "EmailLog", "EmailVerificationCode", "Game", "Round", "Submit", "Team", "TeamApplication"
 ]

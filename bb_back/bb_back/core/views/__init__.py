@@ -14,6 +14,8 @@ from .shared import (
     RoundView,
     GetRoundDataView,
     CreateRoundView,
+    TeamView,
+    TeamAppView,
 )
 
 __all__ = [
@@ -31,5 +33,6 @@ __all__ = [
     "UploadGameLogoView",
     "RoundView",
     "GetRoundDataView",
-    "CreateRoundView",
+    "TeamView",
+    "TeamAppView",
 ]
