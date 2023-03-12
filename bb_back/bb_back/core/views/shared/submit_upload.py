@@ -1,14 +1,14 @@
-from rest_framework import serializers, status
-from rest_framework.views import APIView
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers, status
 from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
-from bb_back.core.utils.view_utils import failed_validation_response
+from rest_framework.views import APIView
 
 from bb_back.core.models import Submit
-from bb_back.settings import SUBMIT_MAX_SIZE
+from bb_back.core.utils.view_utils import failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
+from bb_back.settings import SUBMIT_MAX_SIZE
 
 
 class SubmitRequestSerializer(serializers.Serializer):
@@ -45,11 +45,18 @@ class SubmitView(APIView):
         if submit_file.size > SUBMIT_MAX_SIZE:
             return failed_validation_response(serializer=request_data)
         submit_schema = request_data.data
-        Submit.objects.create(
-            file=submit_file,
+        submit = Submit.objects.filter(
             id_command=submit_schema.get("id_command"),
-            round_num=submit_schema.get("round_num"),
-        )
+            round_num=submit_schema.get("round_num")).first()
+        if submit:
+            submit.file = submit_file
+            submit.save()
+        else:
+            Submit.objects.create(
+                file=submit_file,
+                id_command=submit_schema.get("id_command"),
+                round_num=submit_schema.get("round_num"),
+            )
 
         response_data = SubmitResponseSerializer(
             data={"response_data": submit_schema})

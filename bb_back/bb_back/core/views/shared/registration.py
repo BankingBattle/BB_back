@@ -4,17 +4,17 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from bb_back.core.models import User
 from bb_back.core.constants import EmailTypes
-from bb_back.core.utils.view_utils import response, failed_validation_response
+from bb_back.core.models import User
 from bb_back.core.utils import EmailSender, is_valid_email
+from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer
 from bb_back.settings import ADMIN_KEY
 
 
 class BaseRegistrationSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=30)
-    last_name = serializers.CharField(max_length=30)
+    first_name = serializers.CharField(max_length=30, required=False)
+    last_name = serializers.CharField(max_length=30, required=False)
     email = serializers.CharField(max_length=63)
     login = serializers.CharField(max_length=30)
 

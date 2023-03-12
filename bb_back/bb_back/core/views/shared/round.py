@@ -1,19 +1,22 @@
-from rest_framework import serializers, status
-from rest_framework.views import APIView
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework.response import Response
 from django.http import HttpResponse
-from bb_back.core.utils.view_utils import response, failed_validation_response
-import os
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
+from bb_back.settings import SUBMIT_MAX_SIZE
+from drf_yasg import openapi
 
-from bb_back.core.models import Round
 from bb_back.core.models import Game
-from bb_back.settings import MEDIA_ROOT
+from bb_back.core.models import Round
+from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import (
     BaseResponseSerializer,
     BadRequestResponseSerializer,
     NotFoundResponseSerializer,
+    UserRolePermissionDeniedSerializer,
 )
+from bb_back.core.views.utils.decorators import is_staff_user
 
 
 class CreateRoundRequestSerializer(serializers.Serializer):
@@ -36,7 +39,7 @@ class RoundRequestSerializer(serializers.Serializer):
     datetime_start = serializers.DateTimeField()
     datetime_end = serializers.DateTimeField()
 
-    is_active = serializers.BooleanField(default=True)
+    is_active = serializers.BooleanField()
 
 
 class RoundResponseSerializer(BaseResponseSerializer):
@@ -45,6 +48,47 @@ class RoundResponseSerializer(BaseResponseSerializer):
 
 class CreateRoundResponseSerializer(BaseResponseSerializer):
     response_data = CreateRoundRequestSerializer()
+
+
+class UpdateRoundRequestSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=63, required=False)
+    description = serializers.CharField(required=False)
+
+    datetime_start = serializers.DateTimeField(required=False)
+    datetime_end = serializers.DateTimeField(required=False)
+
+    is_active = serializers.BooleanField(default=True)
+
+
+class UploadRoundDataRequestSerializer(serializers.Serializer):
+    data_of_round = serializers.FileField()
+
+
+class UpdateRoundResponsePrivateSerializer(serializers.Serializer):
+    game_id = serializers.IntegerField()
+    name = serializers.CharField(max_length=63)
+    description = serializers.CharField()
+
+    datetime_start = serializers.DateTimeField()
+    datetime_end = serializers.DateTimeField()
+
+    is_active = serializers.BooleanField()
+
+
+class UploadRoundDataResponseSerializer(BaseResponseSerializer):
+    response_data = serializers.FileField()
+
+
+class UpdateRoundResponseSerializer(BaseResponseSerializer):
+    response_data = UpdateRoundResponsePrivateSerializer()
+
+
+class DeleteRoundResponsePrivateSerializer(serializers.Serializer):
+    success = serializers.BooleanField()
+
+
+class DeleteRoundResponseSerializer(BaseResponseSerializer):
+    response_data = DeleteRoundResponsePrivateSerializer()
 
 
 class RoundView(APIView):
@@ -73,6 +117,79 @@ class RoundView(APIView):
             is_active=round.is_active,
             game_id=round.game_id,
         )))
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=UpdateRoundRequestSerializer,
+                         responses={
+                             status.HTTP_200_OK: RoundResponseSerializer,
+                             status.HTTP_400_BAD_REQUEST:
+                             BadRequestResponseSerializer,
+                             status.HTTP_404_NOT_FOUND:
+                             NotFoundResponseSerializer,
+                         })
+    def patch(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+        request_data = UpdateRoundRequestSerializer(data=request.data)
+
+        if not request_data.is_valid():
+            return failed_validation_response(serializer=request_data)
+        data = request_data.data
+        if data.get("name"):
+            round.name = data.get("name")
+        if data.get("description"):
+            round.description = data.get("description")
+        if data.get("datetime_start"):
+            round.datetime_start = data.get("datetime_start")
+        if data.get("datetime_end"):
+            round.datetime_end = data.get("datetime_end")
+        if data.get("is_active") is not None:
+            round.is_active = data.get("is_active")
+        round.save()
+
+        response_data = RoundResponseSerializer(data=dict(response_data=dict(
+            id=round.id,
+            name=round.name,
+            description=round.description,
+            datetime_start=round.datetime_start,
+            datetime_end=round.datetime_end,
+            is_active=round.is_active,
+            game_id=round.game_id,
+        )))
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=UpdateRoundRequestSerializer,
+                         responses={
+                             status.HTTP_200_OK:
+                             DeleteRoundResponsePrivateSerializer,
+                             status.HTTP_400_BAD_REQUEST:
+                             BadRequestResponseSerializer,
+                             status.HTTP_404_NOT_FOUND:
+                             NotFoundResponseSerializer,
+                             status.HTTP_403_FORBIDDEN:
+                             UserRolePermissionDeniedSerializer
+                         })
+    @is_staff_user
+    def delete(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+        round.is_active = False
+        round.save()
+
+        response_data = CreateRoundResponseSerializer(
+            data={"response_data": {
+                "success": True
+            }})
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
 
@@ -115,22 +232,56 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} does not exist.",
             )
-            # TODO Хардкод, требуется сделать эендпоинт загрузки файла и вывод по данным из поля самого объекта
-        file_path = os.path.join(MEDIA_ROOT,
-                                 f"round-data/{round.game_id}/{round_id}.txt")
-        if not os.path.exists(file_path):
+        if not round.data_of_round:
             return response(
                 success=False,
                 status_code=status.HTTP_404_NOT_FOUND,
                 data={},
-                message=
-                f"Round with id = {round_id} has no data. Path to {file_path} does not exist",
+                message=f"Round with id = {round_id} has no data.",
             )
 
-        file_stream = open(file_path, "rb")
-        response_data = HttpResponse(file_stream.read(),
+        response_data = HttpResponse(round.data_of_round,
                                      content_type="application/vnd.ms-excel")
         response_data[
-            "Content-Disposition"] = "inline; filename=" + os.path.basename(
-                file_path)
+            "Content-Disposition"] = "inline; filename=" + round.data_of_round.name
         return response_data
+
+
+class UploudRoundData(APIView):
+    parser_classes = [MultiPartParser, FormParser, FileUploadParser]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "file",
+                in_=openapi.IN_FORM,
+                description="file",
+                type=openapi.TYPE_FILE,
+                required=True,
+            )
+        ],
+        responses={status.HTTP_200_OK: UploadRoundDataResponseSerializer},
+    )
+    def put(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+
+        data_file = request.FILES.get("file")
+
+        if data_file.size > SUBMIT_MAX_SIZE:
+            return response(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                data={},
+                message=f"File size {data_file.size} > {SUBMIT_MAX_SIZE}")
+
+        round.data_of_round = data_file
+        round.save()
+        response_data = UploadRoundDataResponseSerializer(
+            data={"response_data": {}})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
