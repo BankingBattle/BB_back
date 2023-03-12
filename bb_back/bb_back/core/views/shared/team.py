@@ -4,9 +4,7 @@ from rest_framework import status, serializers, permissions
 from drf_yasg.utils import swagger_auto_schema
 
 from bb_back.core.models import Team, Game
-from bb_back.core.views.utils.base_serializers import (
-    BaseResponseSerializer,
-)
+from bb_back.core.views.utils.base_serializers import BaseResponseSerializer
 from bb_back.core.utils.view_utils import failed_validation_response, response
 
 
