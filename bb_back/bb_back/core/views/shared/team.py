@@ -14,7 +14,9 @@ from bb_back.core.utils.view_utils import failed_validation_response, response
 
 class CreateTeamRequestSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=15)
-    description = serializers.CharField(max_length=255, allow_null=True, required=False)
+    description = serializers.CharField(max_length=255,
+                                        allow_null=True,
+                                        required=False)
     game_id = serializers.IntegerField()
 
 
@@ -25,11 +27,9 @@ class CreateTeamResponseSerializer(BaseResponseSerializer):
 class TeamView(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
-    @swagger_auto_schema(request_body=CreateTeamRequestSerializer,
-                         responses={
-                             status.HTTP_201_CREATED:
-                             CreateTeamResponseSerializer
-                         })
+    @swagger_auto_schema(
+        request_body=CreateTeamRequestSerializer,
+        responses={status.HTTP_201_CREATED: CreateTeamResponseSerializer})
     def post(self, request):
         request_data = CreateTeamRequestSerializer(data=request.data)
         if not request_data.is_valid():
@@ -47,8 +47,7 @@ class TeamView(APIView):
             name=validated_data['name'],
             description=validated_data.get('description'),
             leader=request.user,
-            game=game
-        )
+            game=game)
         members = [request.user]
         team.members.set(members)
         team.save()
