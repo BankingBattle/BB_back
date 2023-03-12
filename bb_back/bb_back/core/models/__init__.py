@@ -7,5 +7,6 @@ from .team import Team
 from .team_application import TeamApplication
 
 __all__ = [
-    "User", "EmailLog", "EmailVerificationCode", "Game", "Round", "Submit", "Team", "TeamApplication"
+    "User", "EmailLog", "EmailVerificationCode", "Game", "Round", "Submit",
+    "Team", "TeamApplication"
 ]

@@ -3,12 +3,12 @@ from .shared import (RegistrationUserView, DecoratedTokenRefreshView,
                      UserView, VerifyEmailView, CreateGameView, GameView,
                      SubmitView, view_404, GetGameLogoView, UploadGameLogoView,
                      RoundView, GetRoundDataView, CreateRoundView,
-                     UploudRoundData)
+                     UploudRoundData, TeamView, TeamAppView)
 
 __all__ = [
     "RegistrationUserView", "DecoratedTokenRefreshView",
     "DecoratedTokenVerifyView", "DecoratedTokenObtainPairView", "UserView",
     "VerifyEmailView", "CreateGameView", "GameView", "SubmitView", "view_404",
     "GetGameLogoView", "UploadGameLogoView", "RoundView", "GetRoundDataView",
-    "CreateRoundView", "UploudRoundData"
+    "CreateRoundView", "UploudRoundData", "TeamView", "TeamAppView"
 ]
