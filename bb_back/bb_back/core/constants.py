@@ -21,3 +21,17 @@ EMAIL_SUBJECTS: Dict[int, str] = {
     "Битва Банков. Подтверждение почтового адреса.",
     EmailTypes.NEW_USER_GREETING_EMAIL: "Битва Банков. Успешная регистрация."
 }
+
+
+# Teams
+class TeamApplicationStatusesEnum(IntEnum):
+    STATUS_PENDING = 0
+    STATUS_ACCEPTED = 1
+    STATUS_REJECTED = 2
+
+
+TEAM_APPLICATION_STATUSES_NAMES = {
+    0: "STATUS_PENDING",
+    1: "STATUS_ACCEPTED",
+    2: "STATUS_REJECTED"
+}

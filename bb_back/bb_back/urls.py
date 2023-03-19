@@ -90,6 +90,14 @@ urlpatterns = [
         f"{API_PREFIX}/{API_VERSION}/round/uploud_data/<int:round_id>/",
         views.UploudRoundData.as_view(),
     ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/team/application/",
+        views.TeamApplicationView.as_view(),
+    ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/team/application/review/",
+        views.ReviewTeamApplicationView.as_view(),
+    ),
     re_path(r"^.*/$", views.view_404,
             name="error404"),  # regex for all endpoints. Has to be last.
 ]
