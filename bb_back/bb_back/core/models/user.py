@@ -48,6 +48,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=63, unique=True)
     login = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=255)
+    team = models.ForeignKey("Team",
+                             on_delete=models.SET_NULL,
+                             null=True,
+                             related_name="users")
 
     created_at = models.DateTimeField(default=timezone.now)
 
