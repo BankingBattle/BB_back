@@ -78,6 +78,7 @@ class UpdateRoundResponsePrivateSerializer(serializers.Serializer):
 class UploadRoundDataResponseSerializer(BaseResponseSerializer):
     response_data = serializers.FileField()
 
+
 class RoundDataResponseSerializer(BaseResponseSerializer):
     response_data = serializers.FileField()
 
@@ -225,9 +226,9 @@ class CreateRoundView(APIView):
 
 
 class GetRoundDataView(APIView):
+
     @swagger_auto_schema(
-        responses={status.HTTP_200_OK: RoundDataResponseSerializer},
-    )
+        responses={status.HTTP_200_OK: RoundDataResponseSerializer}, )
     def get(self, request, round_id):
         round = Round.objects.filter(id=round_id).first()
         if not round:
