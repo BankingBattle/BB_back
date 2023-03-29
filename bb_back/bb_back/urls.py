@@ -98,6 +98,14 @@ urlpatterns = [
         f"{API_PREFIX}/{API_VERSION}/team/application/review/",
         views.ReviewTeamApplicationView.as_view(),
     ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/team/current/",
+        views.CurrentTeamView.as_view(),
+    ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/team/",
+        views.TeamListView.as_view(),
+    ),
     re_path(r"^.*/$", views.view_404,
             name="error404"),  # regex for all endpoints. Has to be last.
 ]
