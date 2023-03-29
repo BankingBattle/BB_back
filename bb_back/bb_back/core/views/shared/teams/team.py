@@ -143,19 +143,19 @@ class TeamListView(APIView):
 
 def _team_to_response(team: Team):
     users = User.objects.filter(team=team)
-    users = [
+    user_schemas = [
         UserTeamResponseSerializer(data=dict(login=user.login,
                                              email=user.email,
                                              first_name=user.first_name,
                                              last_name=user.last_name))
         for user in users
     ]
-    for user in users:
+    for user in user_schemas:
         user.is_valid()
     team_data = TeamResponseSerializer(
-        data=dict(game=team.game.name,
+        data=dict(game=team.game.name if team.game else None,
                   name=team.name,
                   description=team.description,
-                  users=[user.data for user in users]))
+                  users=[user.data for user in user_schemas]))
     team_data.is_valid()
     return team_data.data
