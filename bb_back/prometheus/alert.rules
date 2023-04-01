@@ -1,0 +1,20 @@
+groups: 
+- name: test
+  rules:
+  - alert: PrometheusTargetMissing
+    expr: up == 0
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus target missing (instance {{ $labels.instance }})"
+      description: "A Prometheus target has disappeared. An exporter might be crashed. VALUE = {{ $value }}  LABELS: {{ $labels }}"
+
+  - alert: Low free Disk space
+    expr: (sum(node_filesystem_free_bytes) / sum(node_filesystem_size_bytes))*100 < 10
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      title: Low free space on {{ $labels.instance }}
+      description: On {{ $labels.instance }} device {{ $labels.device }} mounted on {{ $labels.mountpoint }} has low free space of {{ $value }}%
