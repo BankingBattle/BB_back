@@ -76,6 +76,7 @@ class GetGameResponsePrivateSerializer(serializers.Serializer):
     datetime_end = serializers.DateTimeField(allow_null=False, required=False)
     rounds = GameRoundResponseSerializer(many=True)
     leaderboard = GameLeaderboardResponseSerializer(many=True)
+    is_active = serializers.BooleanField(allow_null=True, required=False)
 
 
 class GetGameResponseSerializer(BaseResponseSerializer):
@@ -226,15 +227,14 @@ class GameView(APIView):
                 message=f"Game with id = {game_id} does not exist.")
         game_rounds = GameViewsHandler.get_game_rounds(game=game)
         game_leaderboard = GameViewsHandler.get_game_leaderboard(game=game)
-        inner_response = dict(
-            id=game.id,
-            name=game.name,
-            description=game.description,
-            rounds=game_rounds,
-            leaderboard=game_leaderboard,
-            datetime_start=game.datetime_start,
-            datetime_end=game.datetime_end,
-        )
+        inner_response = dict(id=game.id,
+                              name=game.name,
+                              description=game.description,
+                              rounds=game_rounds,
+                              leaderboard=game_leaderboard,
+                              datetime_start=game.datetime_start,
+                              datetime_end=game.datetime_end,
+                              is_active=game.is_active)
         response_data = GetGameResponseSerializer(
             data={"response_data": inner_response})
         response_data.is_valid()
