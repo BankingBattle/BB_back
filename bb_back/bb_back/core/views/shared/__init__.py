@@ -13,7 +13,7 @@ from .round import RoundView
 from .round import GetRoundDataView
 from .round import CreateRoundView
 from .round import UploudRoundData
-from .teams import TeamApplicationView, ReviewTeamApplicationView
+from .teams import TeamApplicationView, ReviewTeamApplicationView, TeamListView, CurrentTeamView
 
 __all__ = [
     "RegistrationUserView", "DecoratedTokenRefreshView",
@@ -21,5 +21,6 @@ __all__ = [
     "VerifyEmailView", "CreateGameView", "GameView", "GetGameLogoView",
     "UploadGameLogoView", "SubmitView", "view_404", "RoundView",
     "GetRoundDataView", "CreateRoundView", "UploudRoundData",
-    "TeamApplicationView", "ReviewTeamApplicationView"
+    "TeamApplicationView", "ReviewTeamApplicationView", "TeamListView",
+    "CurrentTeamView"
 ]
