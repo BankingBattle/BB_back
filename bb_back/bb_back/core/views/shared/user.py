@@ -29,6 +29,7 @@ class BaseGetUserResponseSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=63, required=True)
     login = serializers.CharField(max_length=30, required=True)
     is_email_confirmed = serializers.BooleanField(required=True)
+    is_admin = serializers.BooleanField(required=False, allow_null=True)
 
 
 class GetUserResponseSerializer(BaseResponseSerializer):
@@ -93,6 +94,7 @@ class UserView(APIView):
                                last_name=user.last_name,
                                email=user.email,
                                login=user.login,
-                               is_email_confirmed=user.is_email_confirmed)))
+                               is_email_confirmed=user.is_email_confirmed,
+                               is_admin=user.is_staff)))
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
