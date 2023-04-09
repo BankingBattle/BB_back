@@ -219,7 +219,10 @@ class GameView(APIView):
             status.HTTP_404_NOT_FOUND: NotFoundResponseSerializer
         })
     def get(self, request, game_id):
-        game = Game.objects.filter(id=game_id, is_active=True).first()
+        filters = dict(id=game_id)
+        if not request.user.is_staff:
+            filters.update(is_active=True)
+        game = Game.objects.filter(**filters).first()
         if not game:
             return response(
                 status_code=status.HTTP_404_NOT_FOUND,
