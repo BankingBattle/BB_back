@@ -30,7 +30,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "3082:3082"
 
     volumes:
       - /var/log/nginx/access.log/:/var/log/nginx/access.log
