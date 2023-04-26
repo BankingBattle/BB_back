@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status, serializers, permissions
 from bb_back.core.models import Team
 from ...utils.base_serializers import BaseResponseSerializer
-from ....constants import TEAM_APPLICATION_STATUSES_NAMES, TeamApplicationStatusesEnum, MEMBER_COUNT_LIMIT
+from ....constants import TEAM_APPLICATION_STATUSES_NAMES, TeamApplicationStatusesEnum
 from ....models.teams.member_application import MemberApplication
 from ....utils.view_utils import response
 
@@ -67,27 +67,29 @@ class MemberApplicationView(APIView):
             return response(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 data={},
-                message=f"Team application with id = {team.application.id} has not been accepted.",
+                message=
+                f"Team application with id = {team.application.id} has not been accepted.",
             )
 
-        if MemberApplication.objects.filter(team=team, applicant=request.user).count() != 0:
+        if MemberApplication.objects.filter(
+                team=team, applicant=request.user).count() != 0:
             return response(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 data={},
                 message=f"Application was sent from this user",
             )
 
-        application = MemberApplication.objects.create(team=team,
-                                                       applicant=request.user,
-                                                       status=TeamApplicationStatusesEnum.STATUS_PENDING)
+        application = MemberApplication.objects.create(
+            team=team,
+            applicant=request.user,
+            status=TeamApplicationStatusesEnum.STATUS_PENDING)
         application.save()
-        response_data = CreateMemberAppResponseSerializer(
-            data={
-                "response_data": {
-                    "app_id": application.id,
-                    "team_id": team_id
-                }
-            })
+        response_data = CreateMemberAppResponseSerializer(data={
+            "response_data": {
+                "app_id": application.id,
+                "team_id": team_id
+            }
+        })
         response_data.is_valid()
         return Response(response_data.data, status=status.HTTP_201_CREATED)
 
@@ -106,12 +108,16 @@ class MemberApplicationView(APIView):
         applications = []
         for i, app in enumerate(raw_applications):
             applications.append({
-                "app_id": app.id,
-                "applicant_email": app.applicant.email,
-                "status": TEAM_APPLICATION_STATUSES_NAMES[app.status]
+                "app_id":
+                app.id,
+                "applicant_email":
+                app.applicant.email,
+                "status":
+                TEAM_APPLICATION_STATUSES_NAMES[app.status]
             })
 
-        applications_data = MemberApplicationSerializer(applications, many=True)
+        applications_data = MemberApplicationSerializer(applications,
+                                                        many=True)
         response_data = GetMemberApplicationResponseSerializer(
             data={
                 "response_data": {

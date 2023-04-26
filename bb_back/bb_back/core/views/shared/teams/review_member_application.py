@@ -54,7 +54,8 @@ class ReviewMemberApplicationView(APIView):
                 status_code=django_status.HTTP_404_NOT_FOUND,
                 data={},
                 message=
-                f"Member Application with id = {data.get('id')} does not exist.")
+                f"Member Application with id = {data.get('id')} does not exist."
+            )
         team = member_application.team
         team_founder = team.application.applicant
         if request.user != team_founder:
@@ -62,27 +63,28 @@ class ReviewMemberApplicationView(APIView):
                 status_code=django_status.HTTP_404_NOT_FOUND,
                 data={},
                 message=
-                f"Only team founder with id = {team_founder.id} permitted to review members.")
+                f"Only team founder with id = {team_founder.id} permitted to review members."
+            )
         if not team.game.is_active:
             return response(
                 status_code=django_status.HTTP_404_NOT_FOUND,
                 data={},
-                message=
-                "Application no longer active due to game been inactive")
+                message="Application no longer active due to game been inactive"
+            )
 
         accepted = TeamApplicationStatusesEnum.STATUS_ACCEPTED
         members = MemberApplication.objects.filter(team=team, status=accepted)
-        if members.count() > MEMBER_COUNT_LIMIT and data.get("status") == accepted:
-            return response(
-                status_code=django_status.HTTP_400_BAD_REQUEST,
-                data={},
-                message=
-                "Member limit exceeded.")
+        if members.count() > MEMBER_COUNT_LIMIT and data.get(
+                "status") == accepted:
+            return response(status_code=django_status.HTTP_400_BAD_REQUEST,
+                            data={},
+                            message="Member limit exceeded.")
 
         with transaction.atomic():
-            status = {i.name: i.value
-                      for i in TeamApplicationStatusesEnum
-                      }.get(data.get("status"))
+            status = {
+                i.name: i.value
+                for i in TeamApplicationStatusesEnum
+            }.get(data.get("status"))
             member_application.status = status
             member_application.save()
             if status == TeamApplicationStatusesEnum.STATUS_ACCEPTED.value:
