@@ -24,6 +24,5 @@ __all__ = [
     "UploadGameLogoView", "SubmitView", "view_404", "RoundView",
     "GetRoundDataView", "CreateRoundView", "UploudRoundData",
     "TeamApplicationView", "ReviewTeamApplicationView", "TeamListView",
-    "CurrentTeamView", "MemberApplicationView",
-    "ReviewMemberApplicationView"
+    "CurrentTeamView", "MemberApplicationView", "ReviewMemberApplicationView"
 ]
