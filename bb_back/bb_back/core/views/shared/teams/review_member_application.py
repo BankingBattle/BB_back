@@ -3,13 +3,10 @@ from rest_framework import serializers, permissions, status as django_status
 from rest_framework.views import APIView
 
 from bb_back.core.constants import TeamApplicationStatusesEnum, TEAM_APPLICATION_STATUSES_NAMES, MEMBER_COUNT_LIMIT
-from bb_back.core.models import Team
-from bb_back.core.models import TeamApplication
 from bb_back.core.models.teams.member_application import MemberApplication
 from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer, \
     UserRolePermissionDeniedSerializer
-from bb_back.core.views.utils.decorators import is_staff_user
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 

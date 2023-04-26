@@ -76,7 +76,7 @@ class MemberApplicationView(APIView):
             return response(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 data={},
-                message=f"Application was sent from this user",
+                message="Application was sent from this user",
             )
 
         application = MemberApplication.objects.create(
