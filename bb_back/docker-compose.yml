@@ -11,9 +11,11 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   web:
-    image: sterals/bb:latest
+    build: .
+    command: bash docker-entrypoint.sh
     restart: always
     volumes:
+      - .:/code
       - static_volume:/code/bb_back/static/django
       - media_volume:/code/bb_back/media/django
     depends_on:

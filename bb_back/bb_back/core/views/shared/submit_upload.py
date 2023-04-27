@@ -4,6 +4,7 @@ from rest_framework import serializers, status
 from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime
 
 from bb_back.core.models import Submit
 from bb_back.core.utils.view_utils import failed_validation_response
@@ -39,26 +40,34 @@ class SubmitView(APIView):
     )
     def post(self, request):
         request_data = SubmitRequestSerializer(data=request.data)
+
         if not request_data.is_valid() or request.FILES.get("file") is None:
             return failed_validation_response(serializer=request_data)
+        
         submit_file = request.FILES.get("file")
+
         if submit_file.size > SUBMIT_MAX_SIZE:
             return failed_validation_response(serializer=request_data)
+        
         submit_schema = request_data.data
         submit = Submit.objects.filter(
             id_command=submit_schema.get("id_command"),
             round_num=submit_schema.get("round_num")).first()
+        
         if submit:
             submit.file = submit_file
+            submit.create_at = datetime.datetime.now()
             submit.save()
         else:
             Submit.objects.create(
                 file=submit_file,
                 id_command=submit_schema.get("id_command"),
                 round_num=submit_schema.get("round_num"),
+                create_at = datetime.datetime.now(),
             )
 
         response_data = SubmitResponseSerializer(
             data={"response_data": submit_schema})
+        
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)

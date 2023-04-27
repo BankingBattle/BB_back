@@ -9,7 +9,7 @@ from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from bb_back.core.models import Game, Round
+from bb_back.core.models import Game, Round, Submit, Team
 from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer, \
     NotFoundResponseSerializer, UserRolePermissionDeniedSerializer
@@ -122,31 +122,29 @@ class GameViewsHandler:
         return [round_data.data for round_data in serialized_rounds]
 
     @staticmethod
-    def get_game_leaderboard(game: Game) -> List[Dict]:
-        # TODO hardcode
-        return [{
-            "name": "Test team №1",
-            "id": 1,
-            "place": 1,
-            "points": 1234,
-            "is_current_team": False
-        }, {
-            "name": "Test team №1",
-            "id": 2,
-            "place": 2,
-            "points": 234,
-            "is_current_team": True
-        }, {
-            "name": "Test team №1",
-            "id": 3,
-            "place": 3,
-            "points": 34,
-            "is_current_team": False
-        }]
+    def get_sum_score(id_command, game : Game):
+        sum = 0
+        rounds = Round.objects.filter(game=game)
+        for round in rounds:
+            last_submit = Submit.objects.filter(round_num=round.id, id_command = id_command, final = True).first()
 
+            if last_submit:
+                sum += last_submit.score
+            else:
+                last_submit = Submit.objects.filter(round_num=round.id, id_command = id_command).order_by('create_at').first()
+        return sum
+
+    @staticmethod
+    def get_game_leaderboard(game: Game) -> List[Dict]:
+        num = 0
+        for command in Team.objects.filter(game = game):
+            num = get_sum_score(command.id, game) + 1
+
+        return num
+        
 
 class CreateGameView(APIView):
-    permission_classes = (permissions.IsAuthenticated, )
+    # permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(request_body=CreateGameRequestSerializer,
                          responses={
@@ -157,7 +155,7 @@ class CreateGameView(APIView):
                              status.HTTP_403_FORBIDDEN:
                              UserRolePermissionDeniedSerializer
                          })
-    @is_staff_user
+   # @is_staff_user
     def post(self, request):
         request_data = CreateGameRequestSerializer(data=request.data)
         if not request_data.is_valid():
