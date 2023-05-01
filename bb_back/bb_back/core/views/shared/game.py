@@ -129,11 +129,11 @@ class GameViewsHandler:
         return [round_data.data for round_data in serialized_rounds]
 
     @staticmethod
-    def get_game_leaderboard(game: Game) -> List[Dict]:
+    def get_game_leaderboard(game: Game, current_team) -> List[Dict]:
         leaders = []
         for team in Team.objects.filter(game = game):
             score = GameViewsHandler.get_sum_score(team.id, game)
-            team_position = TeamLeaderboardPosition( team.id,team.name, score, False)
+            team_position = TeamLeaderboardPosition( team.id,team.name, score, team.id == current_team.id)
             leaders.append(team_position)
         
         leaders = sorted(leaders, reverse=True, key=lambda x: x.points)
@@ -232,7 +232,7 @@ class CreateGameView(APIView):
                          datetime_end=game.datetime_end,
                          rounds=GameViewsHandler.get_game_rounds(game=game),
                          leaderboard=GameViewsHandler.get_game_leaderboard(
-                             game=game)) for game in games
+                             game=game, current_team = request.user.team)) for game in games
                 ]
             })
         response_data.is_valid()
