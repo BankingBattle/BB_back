@@ -266,7 +266,7 @@ class GameView(APIView):
                 message=f"Game with id = {game_id} does not exist.")
         game_rounds = GameViewsHandler.get_game_rounds(game=game)
         game_leaderboard = GameViewsHandler.get_game_leaderboard(
-           game=game, current_team=request.user.team)
+            game=game, current_team=request.user.team)
         inner_response = dict(id=game.id,
                               name=game.name,
                               description=game.description,
@@ -318,7 +318,8 @@ class GameView(APIView):
             name=game.name,
             description=game.description,
             rounds=GameViewsHandler.get_game_rounds(game=game),
-            leaderboard=GameViewsHandler.get_game_leaderboard(game=game, current_team=request.user.team),
+            leaderboard=GameViewsHandler.get_game_leaderboard(
+                game=game, current_team=request.user.team),
             datetime_start=game.datetime_start,
             datetime_end=game.datetime_end,
         )
