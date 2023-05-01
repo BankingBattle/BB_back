@@ -32,6 +32,13 @@ class GameLeaderboardResponseSerializer(serializers.Serializer):
     points = serializers.IntegerField()
     is_current_team = serializers.BooleanField()
 
+class TeamLeaderboardPosition():
+    def __init__(self, id, name, points, is_current_team):
+        self.id = id
+        self.name = name
+        self.points = points
+        self.is_current_team = is_current_team
+
 
 class ListGameResponsePrivateSerializer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -122,29 +129,54 @@ class GameViewsHandler:
         return [round_data.data for round_data in serialized_rounds]
 
     @staticmethod
+    def get_game_leaderboard(game: Game) -> List[Dict]:
+        leaders = []
+        for team in Team.objects.filter(game = game):
+            score = GameViewsHandler.get_sum_score(team.id, game)
+            team_position = TeamLeaderboardPosition( team.id,team.name, score, False)
+            leaders.append(team_position)
+        
+        leaders = sorted(leaders, reverse=True, key=lambda x: x.points)
+        index = 1
+        
+        serialized_leaderBoard = []
+
+        for elem in leaders:
+            serialized_leaderBoard.append(
+                GameLeaderboardResponseSerializer(
+                    data = dict(
+                        id = elem.id,
+                        name = elem.name,
+                        place = index,
+                        points = elem.points,
+                        is_current_team = elem.is_current_team
+                    )
+                )
+            )
+            index += 1
+
+        for leaderBoard_data in serialized_leaderBoard:
+            leaderBoard_data.is_valid()
+        return [leaderBoard_data.data for leaderBoard_data in serialized_leaderBoard]
+    
+
+    @staticmethod
     def get_sum_score(id_command, game : Game):
         sum = 0
         rounds = Round.objects.filter(game=game)
         for round in rounds:
             last_submit = Submit.objects.filter(round_num=round.id, id_command = id_command, final = True).first()
 
-            if last_submit:
-                sum += last_submit.score
-            else:
+            if last_submit is not None:
                 last_submit = Submit.objects.filter(round_num=round.id, id_command = id_command).order_by('create_at').first()
+            if last_submit is not None:
+                sum += last_submit.score
+
         return sum
-
-    @staticmethod
-    def get_game_leaderboard(game: Game) -> List[Dict]:
-        num = 0
-        for command in Team.objects.filter(game = game):
-            num = get_sum_score(command.id, game) + 1
-
-        return num
         
 
 class CreateGameView(APIView):
-    # permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(request_body=CreateGameRequestSerializer,
                          responses={
@@ -155,7 +187,7 @@ class CreateGameView(APIView):
                              status.HTTP_403_FORBIDDEN:
                              UserRolePermissionDeniedSerializer
                          })
-   # @is_staff_user
+    @is_staff_user
     def post(self, request):
         request_data = CreateGameRequestSerializer(data=request.data)
         if not request_data.is_valid():

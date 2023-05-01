@@ -63,7 +63,7 @@ class SubmitView(APIView):
                 file=submit_file,
                 id_command=submit_schema.get("id_command"),
                 round_num=submit_schema.get("round_num"),
-                create_at = datetime.datetime.now(),
+                create_at = datetime.now(),
             )
 
         response_data = SubmitResponseSerializer(
