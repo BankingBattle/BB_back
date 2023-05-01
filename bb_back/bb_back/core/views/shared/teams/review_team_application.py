@@ -60,10 +60,9 @@ class ReviewTeamApplicationView(APIView):
                 message=
                 f"Team Application with id = {data.get('id')} does not exist.")
         with transaction.atomic():
-            status = {
-                i.name: i.value
-                for i in TeamApplicationStatusesEnum
-            }.get(data.get("status"))
+            status = {i.name: i.value
+                      for i in TeamApplicationStatusesEnum
+                      }.get(data.get("status"))
             team_application.status = status
             team_application.save()
             if status == TeamApplicationStatusesEnum.STATUS_ACCEPTED.value:
