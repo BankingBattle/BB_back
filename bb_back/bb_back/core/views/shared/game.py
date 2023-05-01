@@ -163,7 +163,7 @@ class GameViewsHandler:
 
     @staticmethod
     def get_sum_score(id_command, game: Game):
-        sum = 0
+        sum = 0.0
         rounds = Round.objects.filter(game=game)
         for round in rounds:
             last_submit = Submit.objects.filter(round_num=round.id,
