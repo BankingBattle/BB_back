@@ -32,7 +32,9 @@ class GameLeaderboardResponseSerializer(serializers.Serializer):
     points = serializers.IntegerField()
     is_current_team = serializers.BooleanField()
 
+
 class TeamLeaderboardPosition():
+
     def __init__(self, id, name, points, is_current_team):
         self.id = id
         self.name = name
@@ -131,49 +133,52 @@ class GameViewsHandler:
     @staticmethod
     def get_game_leaderboard(game: Game, current_team) -> List[Dict]:
         leaders = []
-        for team in Team.objects.filter(game = game):
+        for team in Team.objects.filter(game=game):
             score = GameViewsHandler.get_sum_score(team.id, game)
-            team_position = TeamLeaderboardPosition( team.id,team.name, score, team.id == current_team.id)
+            team_position = TeamLeaderboardPosition(team.id, team.name, score,
+                                                    team.id == current_team.id)
             leaders.append(team_position)
-        
+
         leaders = sorted(leaders, reverse=True, key=lambda x: x.points)
         index = 1
-        
+
         serialized_leaderBoard = []
 
         for elem in leaders:
             serialized_leaderBoard.append(
                 GameLeaderboardResponseSerializer(
-                    data = dict(
-                        name = elem.name,
-                        id = elem.id,
-                        place = index,
-                        points = elem.points,
-                        is_current_team = elem.is_current_team
-                    )
-                )
-            )
+                    data=dict(name=elem.name,
+                              id=elem.id,
+                              place=index,
+                              points=elem.points,
+                              is_current_team=elem.is_current_team)))
             index += 1
 
         for leaderBoard_data in serialized_leaderBoard:
             leaderBoard_data.is_valid()
-        return [leaderBoard_data.data for leaderBoard_data in serialized_leaderBoard]
-    
+        return [
+            leaderBoard_data.data
+            for leaderBoard_data in serialized_leaderBoard
+        ]
 
     @staticmethod
-    def get_sum_score(id_command, game : Game):
+    def get_sum_score(id_command, game: Game):
         sum = 0
         rounds = Round.objects.filter(game=game)
         for round in rounds:
-            last_submit = Submit.objects.filter(round_num=round.id, id_command = id_command, final = True).first()
+            last_submit = Submit.objects.filter(round_num=round.id,
+                                                id_command=id_command,
+                                                final=True).first()
 
             if last_submit is not None:
-                last_submit = Submit.objects.filter(round_num=round.id, id_command = id_command).order_by('create_at').first()
+                last_submit = Submit.objects.filter(
+                    round_num=round.id,
+                    id_command=id_command).order_by('create_at').first()
             if last_submit is not None:
                 sum += last_submit.score
 
         return sum
-        
+
 
 class CreateGameView(APIView):
     permission_classes = (permissions.IsAuthenticated, )
@@ -232,7 +237,8 @@ class CreateGameView(APIView):
                          datetime_end=game.datetime_end,
                          rounds=GameViewsHandler.get_game_rounds(game=game),
                          leaderboard=GameViewsHandler.get_game_leaderboard(
-                             game=game, current_team = request.user.team)) for game in games
+                             game=game, current_team=request.user.team))
+                    for game in games
                 ]
             })
         response_data.is_valid()

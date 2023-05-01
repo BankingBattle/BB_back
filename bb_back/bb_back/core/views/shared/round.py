@@ -239,7 +239,7 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} does not exist.",
             )
-        
+
         if not round.data_of_round:
             return response(
                 success=False,

@@ -43,17 +43,17 @@ class SubmitView(APIView):
 
         if not request_data.is_valid() or request.FILES.get("file") is None:
             return failed_validation_response(serializer=request_data)
-        
+
         submit_file = request.FILES.get("file")
 
         if submit_file.size > SUBMIT_MAX_SIZE:
             return failed_validation_response(serializer=request_data)
-        
+
         submit_schema = request_data.data
         submit = Submit.objects.filter(
             id_command=submit_schema.get("id_command"),
             round_num=submit_schema.get("round_num")).first()
-        
+
         if submit:
             submit.file = submit_file
             submit.create_at = datetime.datetime.now()
@@ -63,11 +63,11 @@ class SubmitView(APIView):
                 file=submit_file,
                 id_command=submit_schema.get("id_command"),
                 round_num=submit_schema.get("round_num"),
-                create_at = datetime.now(),
+                create_at=datetime.now(),
             )
 
         response_data = SubmitResponseSerializer(
             data={"response_data": submit_schema})
-        
+
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)

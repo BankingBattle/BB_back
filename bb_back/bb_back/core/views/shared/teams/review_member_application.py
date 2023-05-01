@@ -78,9 +78,10 @@ class ReviewMemberApplicationView(APIView):
                             message="Member limit exceeded.")
 
         with transaction.atomic():
-            status = {i.name: i.value
-                      for i in TeamApplicationStatusesEnum
-                      }.get(data.get("status"))
+            status = {
+                i.name: i.value
+                for i in TeamApplicationStatusesEnum
+            }.get(data.get("status"))
             member_application.status = status
             member_application.save()
             if status == TeamApplicationStatusesEnum.STATUS_ACCEPTED.value:
