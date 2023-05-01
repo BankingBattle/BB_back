@@ -26,8 +26,8 @@ class GameRoundResponseSerializer(serializers.Serializer):
 
 
 class GameLeaderboardResponseSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
     name = serializers.CharField()
+    id = serializers.IntegerField()
     place = serializers.IntegerField()
     points = serializers.IntegerField()
     is_current_team = serializers.BooleanField()
@@ -145,8 +145,8 @@ class GameViewsHandler:
             serialized_leaderBoard.append(
                 GameLeaderboardResponseSerializer(
                     data = dict(
-                        id = elem.id,
                         name = elem.name,
+                        id = elem.id,
                         place = index,
                         points = elem.points,
                         is_current_team = elem.is_current_team

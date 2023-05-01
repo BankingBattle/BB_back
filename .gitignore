@@ -11,3 +11,4 @@ bb_back/submits/
 bb_back/round-data/
 bb_back/media/django/
 bb_back/nginx/
+bb_back/bb_back/core/migrations/
