@@ -234,6 +234,7 @@ class GetRoundDataView(APIView):
         responses={status.HTTP_200_OK: RoundDataResponseSerializer}, )
     def get(self, request, round_id):
         round = Round.objects.filter(id=round_id).first()
+
         if not round:
             return response(
                 success=False,
@@ -241,6 +242,7 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} does not exist.",
             )
+
         if not round.data_of_round:
             return response(
                 success=False,

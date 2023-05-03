@@ -11,9 +11,11 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   web:
-    image: sterals/bb:latest 
+    build: .
+    command: bash docker-entrypoint.sh
     restart: always
     volumes:
+      - .:/code
       - static_volume:/code/bb_back/static/django
       - media_volume:/code/bb_back/media/django
     depends_on:
@@ -24,14 +26,16 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
   nginx:
     image: nginx:1.21.3-alpine
-
     ports:
       - "80:80"
       - "443:443"
 
     volumes:
+      - /var/log/nginx/access.log/:/var/log/nginx/access.log
+      - ./docker-nginx-entrypoint.sh/:/docker-entrypoint.sh
       - ./nginx/:/etc/nginx/conf.d/
       - /home/developer/deploy/front/static/:/usr/share/nginx/html/
       - /etc/ssl/bankingbattle/:/etc/ssl/bankingbattle/

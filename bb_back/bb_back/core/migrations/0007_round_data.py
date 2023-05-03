@@ -9,10 +9,4 @@ class Migration(migrations.Migration):
         ('core', '0006_game_logo'),
     ]
 
-    operations = [
-        migrations.AddField(
-            model_name='round',
-            name='data',
-            field=models.FileField(null=True, upload_to='round_data'),
-        ),
-    ]
+    operations = []

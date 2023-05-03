@@ -8,6 +8,7 @@ from rest_framework import serializers, status
 from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime
 
 from bb_back.core.models import Submit, Round
 from bb_back.core.utils.view_utils import failed_validation_response, response
@@ -43,11 +44,15 @@ class SubmitView(APIView):
     def post(self, request):
         team = request.user.team
         request_data = SubmitRequestSerializer(data=request.data)
+
         if not request_data.is_valid() or request.FILES.get("file") is None:
             return failed_validation_response(serializer=request_data)
+
         submit_file = request.FILES.get("file")
+
         if submit_file.size > SUBMIT_MAX_SIZE:
             return failed_validation_response(serializer=request_data)
+
         submit_schema = request_data.data
         round = Round.objects.filter(id=submit_schema.get("round_num")).first()
         if not round:
@@ -79,6 +84,7 @@ class SubmitView(APIView):
 
         response_data = SubmitResponseSerializer(
             data={"response_data": submit_schema})
+
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
 

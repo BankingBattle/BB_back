@@ -11,6 +11,13 @@ from .submit_upload import SubmitView
 from .view_404 import view_404
 from .round import RoundView, UploadRoundTargetView, GetRoundDataView, CreateRoundView, UploudRoundData
 from .teams import TeamApplicationView, ReviewTeamApplicationView, TeamListView, CurrentTeamView
+from .round import RoundView
+from .round import GetRoundDataView
+from .round import CreateRoundView
+from .round import UploudRoundData
+from .teams import (TeamApplicationView, ReviewTeamApplicationView,
+                    TeamListView, CurrentTeamView, MemberApplicationView,
+                    ReviewMemberApplicationView)
 
 __all__ = [
     "RegistrationUserView", "DecoratedTokenRefreshView",
@@ -19,5 +26,5 @@ __all__ = [
     "UploadGameLogoView", "SubmitView", "view_404", "RoundView",
     "GetRoundDataView", "CreateRoundView", "UploudRoundData",
     "TeamApplicationView", "ReviewTeamApplicationView", "TeamListView",
-    "CurrentTeamView", "UploadRoundTargetView"
+    "CurrentTeamView", "MemberApplicationView", "ReviewMemberApplicationView", "UploadRoundTargetView"
 ]
