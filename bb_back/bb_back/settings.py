@@ -197,6 +197,7 @@ CORE_TEMPLATES_PATH = "bb_back/core/templates"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 API_VERSION = "1.0.0"
+INTERNAL_API_PREFIX = "internal"
 API_PREFIX = "api"
 
 # Email settings
