@@ -133,7 +133,16 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES":
     ("rest_framework_simplejwt.authentication.JWTAuthentication", )
 }
-SWAGGER_SETTINGS = {"USE_SESSION_AUTH": False}
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    "USE_SESSION_AUTH": False
+}
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -188,6 +197,7 @@ CORE_TEMPLATES_PATH = "bb_back/core/templates"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 API_VERSION = "1.0.0"
+INTERNAL_API_PREFIX = "internal"
 API_PREFIX = "api"
 
 # Email settings

@@ -9,7 +9,7 @@ from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from bb_back.core.models import Game, Round
+from bb_back.core.models import Game, Round, Submit, Team
 from bb_back.core.utils.view_utils import response, failed_validation_response
 from bb_back.core.views.utils.base_serializers import BaseResponseSerializer, BadRequestResponseSerializer, \
     NotFoundResponseSerializer, UserRolePermissionDeniedSerializer
@@ -26,11 +26,20 @@ class GameRoundResponseSerializer(serializers.Serializer):
 
 
 class GameLeaderboardResponseSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
     name = serializers.CharField()
+    id = serializers.IntegerField()
     place = serializers.IntegerField()
     points = serializers.IntegerField()
     is_current_team = serializers.BooleanField()
+
+
+class TeamLeaderboardPosition():
+
+    def __init__(self, id, name, points, is_current_team):
+        self.id = id
+        self.name = name
+        self.points = points
+        self.is_current_team = is_current_team
 
 
 class ListGameResponsePrivateSerializer(serializers.Serializer):
@@ -122,27 +131,53 @@ class GameViewsHandler:
         return [round_data.data for round_data in serialized_rounds]
 
     @staticmethod
-    def get_game_leaderboard(game: Game) -> List[Dict]:
-        # TODO hardcode
-        return [{
-            "name": "Test team №1",
-            "id": 1,
-            "place": 1,
-            "points": 1234,
-            "is_current_team": False
-        }, {
-            "name": "Test team №1",
-            "id": 2,
-            "place": 2,
-            "points": 234,
-            "is_current_team": True
-        }, {
-            "name": "Test team №1",
-            "id": 3,
-            "place": 3,
-            "points": 34,
-            "is_current_team": False
-        }]
+    def get_game_leaderboard(game: Game, current_team) -> List[Dict]:
+        leaders = []
+        for team in Team.objects.filter(game=game):
+            score = GameViewsHandler.get_sum_score(team.id, game)
+            team_position = TeamLeaderboardPosition(team.id, team.name, score,
+                                                    team.id == current_team.id)
+            leaders.append(team_position)
+
+        leaders = sorted(leaders, reverse=True, key=lambda x: x.points)
+        index = 1
+
+        serialized_leaderBoard = []
+
+        for elem in leaders:
+            serialized_leaderBoard.append(
+                GameLeaderboardResponseSerializer(
+                    data=dict(name=elem.name,
+                              id=elem.id,
+                              place=index,
+                              points=elem.points,
+                              is_current_team=elem.is_current_team)))
+            index += 1
+
+        for leaderBoard_data in serialized_leaderBoard:
+            leaderBoard_data.is_valid()
+        return [
+            leaderBoard_data.data
+            for leaderBoard_data in serialized_leaderBoard
+        ]
+
+    @staticmethod
+    def get_sum_score(id_command, game: Game):
+        sum = 0.0
+        rounds = Round.objects.filter(game=game)
+        for round in rounds:
+            last_submit = Submit.objects.filter(round_num=round.id,
+                                                id_command=id_command,
+                                                final=True).first()
+
+            if last_submit is not None:
+                last_submit = Submit.objects.filter(
+                    round_num=round.id,
+                    id_command=id_command).order_by('created_at').first()
+            if last_submit is not None:
+                sum += last_submit.score
+
+        return sum
 
 
 class CreateGameView(APIView):
@@ -202,7 +237,8 @@ class CreateGameView(APIView):
                          datetime_end=game.datetime_end,
                          rounds=GameViewsHandler.get_game_rounds(game=game),
                          leaderboard=GameViewsHandler.get_game_leaderboard(
-                             game=game)) for game in games
+                             game=game, current_team=request.user.team))
+                    for game in games
                 ]
             })
         response_data.is_valid()
@@ -229,7 +265,8 @@ class GameView(APIView):
                 data={},
                 message=f"Game with id = {game_id} does not exist.")
         game_rounds = GameViewsHandler.get_game_rounds(game=game)
-        game_leaderboard = GameViewsHandler.get_game_leaderboard(game=game)
+        game_leaderboard = GameViewsHandler.get_game_leaderboard(
+            game=game, current_team=request.user.team)
         inner_response = dict(id=game.id,
                               name=game.name,
                               description=game.description,
@@ -281,7 +318,8 @@ class GameView(APIView):
             name=game.name,
             description=game.description,
             rounds=GameViewsHandler.get_game_rounds(game=game),
-            leaderboard=GameViewsHandler.get_game_leaderboard(game=game),
+            leaderboard=GameViewsHandler.get_game_leaderboard(
+                game=game, current_team=request.user.team),
             datetime_start=game.datetime_start,
             datetime_end=game.datetime_end,
         )

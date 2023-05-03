@@ -5,7 +5,9 @@ from .shared import (RegistrationUserView, DecoratedTokenRefreshView,
                      RoundView, GetRoundDataView, CreateRoundView,
                      UploudRoundData, TeamApplicationView,
                      ReviewTeamApplicationView, TeamListView, CurrentTeamView,
-                     MemberApplicationView, ReviewMemberApplicationView)
+                     MemberApplicationView, ReviewMemberApplicationView,
+                     UploadRoundTargetView)
+from .internal import AppHealthCheckView, DBHealthCheckView
 
 __all__ = [
     "RegistrationUserView", "DecoratedTokenRefreshView",
@@ -14,5 +16,6 @@ __all__ = [
     "GetGameLogoView", "UploadGameLogoView", "RoundView", "GetRoundDataView",
     "CreateRoundView", "UploudRoundData", "TeamApplicationView",
     "ReviewTeamApplicationView", "TeamListView", "CurrentTeamView",
-    "MemberApplicationView", "ReviewMemberApplicationView"
+    "MemberApplicationView", "ReviewMemberApplicationView",
+    "UploadRoundTargetView", "AppHealthCheckView", "DBHealthCheckView"
 ]

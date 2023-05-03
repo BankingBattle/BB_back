@@ -20,7 +20,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from bb_back.core import views
-from bb_back.settings import API_PREFIX, API_VERSION
+from bb_back.settings import API_PREFIX, API_VERSION, INTERNAL_API_PREFIX
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -33,6 +33,10 @@ schema_view = get_schema_view(
 )
 handler404 = views.view_404
 urlpatterns = [
+    path(f"{API_PREFIX}/{API_VERSION}/{INTERNAL_API_PREFIX}/healthcheck/app/",
+         views.AppHealthCheckView.as_view()),
+    path(f"{API_PREFIX}/{API_VERSION}/{INTERNAL_API_PREFIX}/healthcheck/db/",
+         views.DBHealthCheckView.as_view()),
     path("admin/", admin.site.urls),
     path(f"{API_PREFIX}/{API_VERSION}/register/",
          views.RegistrationUserView.as_view()),
@@ -113,6 +117,10 @@ urlpatterns = [
     path(
         f"{API_PREFIX}/{API_VERSION}/team/member/review/",
         views.ReviewMemberApplicationView.as_view(),
+    ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/round/target/<int:round_id>/",
+        views.UploadRoundTargetView.as_view(),
     ),
     re_path(r"^.*/$", views.view_404,
             name="error404"),  # regex for all endpoints. Has to be last.
