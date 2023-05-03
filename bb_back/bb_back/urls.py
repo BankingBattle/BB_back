@@ -91,6 +91,10 @@ urlpatterns = [
         views.UploudRoundData.as_view(),
     ),
     path(
+        f"{API_PREFIX}/{API_VERSION}/round/target/<int:round_id>/",
+        views.UploadRoundTargetView.as_view(),
+    ),
+    path(
         f"{API_PREFIX}/{API_VERSION}/team/application/",
         views.TeamApplicationView.as_view(),
     ),
