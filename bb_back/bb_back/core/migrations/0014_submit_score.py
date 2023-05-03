@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('core',
-         '0013remove_round_data_submit_create_at_submit_final_and_more'),
+         '0013_remove_round_data_submit_create_at_submit_final_and_more'),
     ]
 
     operations = [
