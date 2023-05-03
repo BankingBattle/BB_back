@@ -114,6 +114,10 @@ urlpatterns = [
         f"{API_PREFIX}/{API_VERSION}/team/member/review/",
         views.ReviewMemberApplicationView.as_view(),
     ),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/round/target/<int:round_id>/",
+        views.UploadRoundTargetView.as_view(),
+    ),
     re_path(r"^.*/$", views.view_404,
             name="error404"),  # regex for all endpoints. Has to be last.
 ]

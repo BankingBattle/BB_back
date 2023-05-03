@@ -1,5 +1,7 @@
-from django.db import models
 from datetime import datetime
+
+from django.db import models
+from django.utils import timezone
 
 
 class Submit(models.Model):
@@ -9,3 +11,4 @@ class Submit(models.Model):
     final = models.BooleanField(null=False, default=False)
     score = models.FloatField(null=False, default=0)
     create_at = models.DateTimeField(default=datetime.min)
+    created_at = models.DateTimeField(default=timezone.now)
