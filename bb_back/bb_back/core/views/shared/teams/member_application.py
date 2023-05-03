@@ -53,9 +53,7 @@ class MemberApplicationView(APIView):
                 message=f"Team with id = {team_id} does not exist.",
             )
 
-        print(request.user.team.name)
-
-        if request.user.team:
+        if request.user.team and request.user.team.game.id == team.game.id:
             return response(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 data={},

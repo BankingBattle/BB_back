@@ -80,7 +80,7 @@ class TeamApplicationView(APIView):
                 data={},
                 message="You can't register to a game that has already started."
             )
-        if request.user.team:
+        if request.user.team and request.user.team.game.id == game.id:
             return response(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 data={},
