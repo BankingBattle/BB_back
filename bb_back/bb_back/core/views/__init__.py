@@ -4,7 +4,8 @@ from .shared import (RegistrationUserView, DecoratedTokenRefreshView,
                      SubmitView, view_404, GetGameLogoView, UploadGameLogoView,
                      RoundView, GetRoundDataView, CreateRoundView,
                      UploudRoundData, TeamApplicationView,
-                     ReviewTeamApplicationView, TeamListView, CurrentTeamView)
+                     ReviewTeamApplicationView, TeamListView, CurrentTeamView,
+                     UploadRoundTargetView)
 
 __all__ = [
     "RegistrationUserView", "DecoratedTokenRefreshView",
@@ -12,5 +13,6 @@ __all__ = [
     "VerifyEmailView", "CreateGameView", "GameView", "SubmitView", "view_404",
     "GetGameLogoView", "UploadGameLogoView", "RoundView", "GetRoundDataView",
     "CreateRoundView", "UploudRoundData", "TeamApplicationView",
-    "ReviewTeamApplicationView", "TeamListView", "CurrentTeamView"
+    "ReviewTeamApplicationView", "TeamListView", "CurrentTeamView",
+    "UploadRoundTargetView"
 ]

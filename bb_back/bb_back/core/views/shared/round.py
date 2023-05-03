@@ -16,6 +16,8 @@ from bb_back.core.views.utils.base_serializers import (
     NotFoundResponseSerializer,
     UserRolePermissionDeniedSerializer,
 )
+import codecs
+import csv
 from bb_back.core.views.utils.decorators import is_staff_user
 
 
@@ -204,6 +206,7 @@ class CreateRoundView(APIView):
         request_body=CreateRoundRequestSerializer,
         responses={status.HTTP_201_CREATED: CreateRoundResponseSerializer},
     )
+    @is_staff_user
     def post(self, request):
         request_data = CreateRoundRequestSerializer(data=request.data)
 
@@ -291,3 +294,79 @@ class UploudRoundData(APIView):
             data={"response_data": {}})
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+
+class UploadRoundTargetView(APIView):
+    parser_classes = [MultiPartParser, FormParser, FileUploadParser]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "file",
+                in_=openapi.IN_FORM,
+                description="file",
+                type=openapi.TYPE_FILE,
+                required=True,
+            )
+        ],
+        responses={status.HTTP_200_OK: UploadRoundDataResponseSerializer},
+    )
+    @is_staff_user
+    def post(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+
+        file = request.FILES.get("file")
+        try:
+            csv_file = csv.DictReader(codecs.iterdecode(file, 'utf-8'))
+            for line in csv_file:
+                line: dict
+                if list(line.keys()) != ['id', 'fact', 'amount']:
+                    raise ValueError(
+                        'CSV file columns must be: "id", "fact", "amount"')
+                if not all([value.isnumeric() for value in line.values()]):
+                    raise ValueError(
+                        'All provided values must be valid integers')
+        except ValueError as ex:
+            return response(status_code=status.HTTP_400_BAD_REQUEST,
+                            data={},
+                            message=f"{str(ex)}")
+        if not file.name.endswith(".csv"):
+            return response(status_code=status.HTTP_400_BAD_REQUEST,
+                            data={},
+                            message="Target file must have .csv extension")
+        round.round_target = file
+        round.save()
+        round.round_rates = file
+        round.save()
+        response_data = UploadRoundDataResponseSerializer(
+            data={"response_data": {}})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        responses={status.HTTP_200_OK: RoundDataResponseSerializer}, )
+    def get(self, request, round_id):
+        round = Round.objects.filter(id=round_id).first()
+        if not round:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} does not exist.")
+        if not round.round_target:
+            return response(
+                success=False,
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"No target found for round {round.name}",
+            )
+
+        response_data = HttpResponse(round.round_target,
+                                     content_type="application/vnd.ms-excel")
+        response_data[
+            "Content-Disposition"] = "inline; filename=" + round.round_target.name
+        return response_data
