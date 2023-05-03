@@ -173,7 +173,7 @@ class GameViewsHandler:
             if last_submit is not None:
                 last_submit = Submit.objects.filter(
                     round_num=round.id,
-                    id_command=id_command).order_by('create_at').first()
+                    id_command=id_command).order_by('created_at').first()
             if last_submit is not None:
                 sum += last_submit.score
 
