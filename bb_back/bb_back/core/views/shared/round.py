@@ -250,9 +250,13 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} has no data.",
             )
-
-        response_data = HttpResponse(round.data_of_round,
+        if round.data_of_round is not None:
+            response_data = HttpResponse(round.data_of_round,
                                      content_type="application/vnd.ms-excel")
+        else:
+            response_data = HttpResponse("file does not exist",
+                                     content_type="application/vnd.ms-excel")
+        
         response_data[
             "Content-Disposition"] = "inline; filename=" + round.data_of_round.name
         return response_data

@@ -133,10 +133,15 @@ class GameViewsHandler:
     @staticmethod
     def get_game_leaderboard(game: Game, current_team) -> List[Dict]:
         leaders = []
+        if current_team is None:
+            current_team_id = -1
+        else:
+            current_team_id = current_team.id
+
         for team in Team.objects.filter(game=game):
             score = GameViewsHandler.get_sum_score(team.id, game)
             team_position = TeamLeaderboardPosition(team.id, team.name, score,
-                                                    team.id == current_team.id)
+                                                    team.id == current_team_id)
             leaders.append(team_position)
 
         leaders = sorted(leaders, reverse=True, key=lambda x: x.points)
@@ -192,7 +197,7 @@ class CreateGameView(APIView):
                              status.HTTP_403_FORBIDDEN:
                              UserRolePermissionDeniedSerializer
                          })
-    @is_staff_user
+   # @is_staff_user
     def post(self, request):
         request_data = CreateGameRequestSerializer(data=request.data)
         if not request_data.is_valid():
