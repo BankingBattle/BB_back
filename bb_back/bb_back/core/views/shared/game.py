@@ -197,7 +197,7 @@ class CreateGameView(APIView):
                              status.HTTP_403_FORBIDDEN:
                              UserRolePermissionDeniedSerializer
                          })
-   # @is_staff_user
+    @is_staff_user
     def post(self, request):
         request_data = CreateGameRequestSerializer(data=request.data)
         if not request_data.is_valid():

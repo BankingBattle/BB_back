@@ -260,7 +260,7 @@ class GetRoundDataView(APIView):
             )
         response_data = HttpResponse(round.data_of_round,
                                      content_type="application/vnd.ms-excel")
-        
+
         response_data[
             "Content-Disposition"] = "inline; filename=" + round.data_of_round.name
         return response_data
