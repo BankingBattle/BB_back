@@ -8,6 +8,7 @@ from rest_framework import serializers, status
 from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import os.path
 
 from bb_back.core.models import Game
 from bb_back.core.models import Round
@@ -250,11 +251,14 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} has no data.",
             )
-        if round.data_of_round is not None:
-            response_data = HttpResponse(round.data_of_round,
-                                     content_type="application/vnd.ms-excel")
-        else:
-            response_data = HttpResponse("file does not exist",
+        if not os.path.exists(round.data_of_round.name):
+            return response(
+                success=False,
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Round with id = {round_id} has no data.",
+            )
+        response_data = HttpResponse(round.data_of_round,
                                      content_type="application/vnd.ms-excel")
         
         response_data[
