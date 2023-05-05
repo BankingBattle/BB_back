@@ -41,10 +41,10 @@ class SubmitView(APIView):
         responses={status.HTTP_200_OK: SubmitResponseSerializer},
     )
     def post(self, request):
-        if request.user.id == None:
+        if request.user.id is None:
             return response(status_code=status.HTTP_400_BAD_REQUEST,
                             data={},
-                            message=f"User not found")
+                            message="User not found")
 
         team = request.user.team
         request_data = SubmitRequestSerializer(data=request.data)
