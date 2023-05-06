@@ -86,6 +86,7 @@ class GetGameResponsePrivateSerializer(serializers.Serializer):
     rounds = GameRoundResponseSerializer(many=True)
     leaderboard = GameLeaderboardResponseSerializer(many=True)
     is_active = serializers.BooleanField(allow_null=True, required=False)
+    participating = serializers.BooleanField(allow_null=False, required=False)
 
 
 class GetGameResponseSerializer(BaseResponseSerializer):
@@ -272,6 +273,9 @@ class GameView(APIView):
         game_rounds = GameViewsHandler.get_game_rounds(game=game)
         game_leaderboard = GameViewsHandler.get_game_leaderboard(
             game=game, current_team=request.user.team)
+        participants_of_current_user = False
+        if not request.user.team is None:
+            participants_of_current_user = request.user.team.game == game
         inner_response = dict(id=game.id,
                               name=game.name,
                               description=game.description,
@@ -279,7 +283,8 @@ class GameView(APIView):
                               leaderboard=game_leaderboard,
                               datetime_start=game.datetime_start,
                               datetime_end=game.datetime_end,
-                              is_active=game.is_active)
+                              is_active=game.is_active,
+                              participating=participants_of_current_user)
         response_data = GetGameResponseSerializer(
             data={"response_data": inner_response})
         response_data.is_valid()
