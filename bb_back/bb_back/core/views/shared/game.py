@@ -274,7 +274,7 @@ class GameView(APIView):
         game_leaderboard = GameViewsHandler.get_game_leaderboard(
             game=game, current_team=request.user.team)
         participants_of_current_user = False
-        if not request.user.team is None:
+        if request.user.team is not None:
             participants_of_current_user = request.user.team.game == game
         inner_response = dict(id=game.id,
                               name=game.name,
