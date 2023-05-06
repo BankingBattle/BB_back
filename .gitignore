@@ -1,0 +1,14 @@
+.env/
+env/
+.vscode/
+.idea
+*.pyc
+__pycache__
+venv/
+./venv/
+bb_back/data
+bb_back/submits/
+bb_back/round-data/
+bb_back/media/django/
+bb_back/nginx/
+bb_back/bb_back/core/migrations/

@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  web:
+    build: .
+    command: bash docker-entrypoint.sh
+    restart: always
+    volumes:
+      - .:/code
+      - static_volume:/code/bb_back/static/django
+      - media_volume:/code/bb_back/media/django
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  nginx:
+    image: nginx:1.21.3-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - /var/log/nginx/access.log/:/var/log/nginx/access.log
+      - ./docker-nginx-entrypoint.sh/:/docker-entrypoint.sh
+      - ./nginx/:/etc/nginx/conf.d/
+      - /home/developer/deploy/front/static/:/usr/share/nginx/html/
+      - /etc/ssl/bankingbattle/:/etc/ssl/bankingbattle/
+      - static_volume:/var/html/static/django
+      - media_volume:/var/html/media/django/
+
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
+  media_volume:
