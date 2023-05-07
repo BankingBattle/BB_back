@@ -56,39 +56,11 @@ jobs:
         context: ./bb_back/
         file: ./bb_back/Dockerfile
         tags: ${{ secrets.DOCKER_USERNAME }}/bb:latest 
-        
-  deploy-dev:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/develop'
-    steps:
-      - name: executing remote ssh commands to deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /home/developer/dev-deploy/
-            docker-compose stop
-            touch .env
-            echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} >> .env
-            # echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-            # echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-            # echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-            # echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-            # echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            # echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            docker-compose pull
-            docker-compose up -d
-            # docker exec $(docker ps -aqf "name=deploy_web_1") "python manage.py makemigrations"
-            # docker exec $(docker ps -aqf "name=deploy_web_1") "python manage.py migrate"
-
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     steps:
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
