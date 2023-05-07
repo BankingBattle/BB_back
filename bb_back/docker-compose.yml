@@ -35,7 +35,6 @@ services:
 
     volumes:
       - /var/log/nginx/access.log/:/var/log/nginx/access.log
-      - ./docker-nginx-entrypoint.sh/:/docker-entrypoint.sh
       - ./nginx/:/etc/nginx/conf.d/
       - /home/developer/deploy/front/static/:/usr/share/nginx/html/
       - /etc/ssl/bankingbattle/:/etc/ssl/bankingbattle/
