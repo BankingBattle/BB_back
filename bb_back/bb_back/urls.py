@@ -20,6 +20,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from bb_back.core import views
+from bb_back.core.views.internal.demo import DemoView
 from bb_back.settings import API_PREFIX, API_VERSION, INTERNAL_API_PREFIX
 
 schema_view = get_schema_view(
@@ -37,6 +38,9 @@ urlpatterns = [
          views.AppHealthCheckView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/{INTERNAL_API_PREFIX}/healthcheck/db/",
          views.DBHealthCheckView.as_view()),
+    path(
+        f"{API_PREFIX}/{API_VERSION}/{INTERNAL_API_PREFIX}/demo/<int:status>/",
+        DemoView.as_view()),
     path("admin/", admin.site.urls),
     path(f"{API_PREFIX}/{API_VERSION}/register/",
          views.RegistrationUserView.as_view()),
@@ -84,7 +88,7 @@ urlpatterns = [
     ),
     path(f"{API_PREFIX}/{API_VERSION}/round/<int:round_id>/",
          views.RoundView.as_view()),
-    path(f"{API_PREFIX}/{API_VERSION}/round/create/",
+    path(f"{API_PREFIX}/{API_VERSION}/round/",
          views.CreateRoundView.as_view()),
     path(
         f"{API_PREFIX}/{API_VERSION}/round/data/<int:round_id>/",
