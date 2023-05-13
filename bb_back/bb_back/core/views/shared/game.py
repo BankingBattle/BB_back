@@ -1,6 +1,5 @@
 from typing import List, Dict
 
-from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -338,8 +337,43 @@ class GameView(APIView):
         return Response(data=response_data.data, status=status.HTTP_200_OK)
 
 
-class GetGameLogoView(APIView):
+class GameLogoView(APIView):
+    parser_classes = [MultiPartParser, FormParser, FileUploadParser]
     permission_classes = (permissions.IsAuthenticated, )
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "file",
+                in_=openapi.IN_FORM,
+                description="file",
+                type=openapi.TYPE_FILE,
+                required=True,
+            )
+        ],
+        responses={status.HTTP_200_OK: UploadGameLogoResponseSerializer},
+    )
+    @is_staff_user
+    def put(self, request, game_id):
+        game = Game.objects.filter(id=game_id).first()
+        if not game:
+            return response(
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Game with id = {game_id} does not exist.")
+        logo_file = request.FILES.get("file")
+        if logo_file.size > SUBMIT_MAX_SIZE:
+            return response(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                data={},
+                message=f"File size {logo_file.size} > {SUBMIT_MAX_SIZE}")
+        game.logo = logo_file
+        game.save()
+
+        response_data = UploadGameLogoResponseSerializer(
+            data={"response_data": {}})
+        response_data.is_valid()
+        return Response(data=response_data.data, status=status.HTTP_200_OK)
 
     def get(self, request, game_id):
         game = Game.objects.filter(id=game_id).first()
@@ -357,41 +391,3 @@ class GetGameLogoView(APIView):
         resp['Content-Disposition'] = f'attachment; filename={filename}'
 
         return resp
-
-
-class UploadGameLogoView(APIView):
-    parser_classes = [MultiPartParser, FormParser, FileUploadParser]
-    permission_classes = (permissions.IsAuthenticated, )
-
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                "file",
-                in_=openapi.IN_FORM,
-                description="file",
-                type=openapi.TYPE_FILE,
-                required=True,
-            )
-        ],
-        responses={status.HTTP_200_OK: UploadGameLogoResponseSerializer},
-    )
-    @staff_member_required
-    def put(self, request, game_id):
-        game = Game.objects.filter(id=game_id).first()
-        if not game:
-            return response(
-                status_code=status.HTTP_404_NOT_FOUND,
-                data={},
-                message=f"Game with id = {game_id} does not exist.")
-        logo_file = request.FILES.get("file")
-        if logo_file.size > SUBMIT_MAX_SIZE:
-            return response(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                data={},
-                message=f"File size {logo_file.size} > {SUBMIT_MAX_SIZE}")
-        game.logo = logo_file
-
-        response_data = UploadGameLogoResponseSerializer(
-            data={"response_data": {}})
-        response_data.is_valid()
-        return Response(data=response_data.data, status=status.HTTP_200_OK)

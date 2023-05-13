@@ -38,7 +38,6 @@ ADMIN_KEY = os.getenv("DJANGO_ADMIN_KEY", "123")
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ['*']
 
 # Environs
 DATABASE_NAME = env("DATABASE_NAME")

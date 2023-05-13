@@ -1,4 +1,4 @@
-from .game import CreateGameView, GameView, GetGameLogoView, UploadGameLogoView
+from .game import CreateGameView, GameView, GameLogoView
 from .registration import RegistrationUserView
 from .round import CreateRoundView
 from .round import GetRoundDataView
@@ -21,10 +21,10 @@ from .view_404 import view_404
 __all__ = [
     "RegistrationUserView", "DecoratedTokenRefreshView",
     "DecoratedTokenVerifyView", "DecoratedTokenObtainPairView", "UserView",
-    "VerifyEmailView", "CreateGameView", "GameView", "GetGameLogoView",
-    "UploadGameLogoView", "SubmitView", "view_404", "RoundView",
-    "GetRoundDataView", "CreateRoundView", "UploudRoundData",
-    "TeamApplicationView", "ReviewTeamApplicationView", "TeamListView",
-    "CurrentTeamView", "MemberApplicationView", "ReviewMemberApplicationView",
+    "VerifyEmailView", "CreateGameView", "GameView", "GameLogoView",
+    "SubmitView", "view_404", "RoundView", "GetRoundDataView",
+    "CreateRoundView", "UploudRoundData", "TeamApplicationView",
+    "ReviewTeamApplicationView", "TeamListView", "CurrentTeamView",
+    "MemberApplicationView", "ReviewMemberApplicationView",
     "UploadRoundTargetView"
 ]

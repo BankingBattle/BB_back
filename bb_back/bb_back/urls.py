@@ -75,12 +75,8 @@ urlpatterns = [
     path(f"{API_PREFIX}/{API_VERSION}/game/", views.CreateGameView.as_view()),
     path(f"{API_PREFIX}/{API_VERSION}/game/<int:game_id>/",
          views.GameView.as_view()),
-    path(f"{API_PREFIX}/{API_VERSION}/game/logo/",
-         views.GetGameLogoView.as_view()),
-    path(
-        f"{API_PREFIX}/{API_VERSION}/game/logo/<int:game_id>/",
-        views.UploadGameLogoView.as_view(),
-    ),
+    path(f"{API_PREFIX}/{API_VERSION}/game/logo/<int:game_id>/",
+         views.GameLogoView.as_view()),
     path(
         f"{API_PREFIX}/{API_VERSION}/submit/upload/",
         views.SubmitView.as_view(),
