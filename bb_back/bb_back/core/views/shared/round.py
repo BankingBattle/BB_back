@@ -4,7 +4,7 @@ import csv
 from django.http import HttpResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import serializers, status
+from rest_framework import serializers, status, permissions
 from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -204,6 +204,7 @@ class RoundView(APIView):
 
 
 class CreateRoundView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(
         request_body=CreateRoundRequestSerializer,
