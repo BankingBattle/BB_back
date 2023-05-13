@@ -100,6 +100,7 @@ class DeleteRoundResponseSerializer(BaseResponseSerializer):
 
 
 class RoundView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(
         responses={
@@ -233,6 +234,7 @@ class CreateRoundView(APIView):
 
 
 class GetRoundDataView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
 
     @swagger_auto_schema(
         responses={status.HTTP_200_OK: RoundDataResponseSerializer}, )
@@ -270,6 +272,7 @@ class GetRoundDataView(APIView):
 
 
 class UploudRoundData(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
     parser_classes = [MultiPartParser, FormParser, FileUploadParser]
 
     @swagger_auto_schema(
@@ -310,6 +313,7 @@ class UploudRoundData(APIView):
 
 
 class UploadRoundTargetView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
     parser_classes = [MultiPartParser, FormParser, FileUploadParser]
 
     @swagger_auto_schema(
