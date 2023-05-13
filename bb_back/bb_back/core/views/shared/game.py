@@ -33,7 +33,7 @@ class GameLeaderboardResponseSerializer(serializers.Serializer):
     is_current_team = serializers.BooleanField()
 
 
-class TeamLeaderboardPosition():
+class TeamLeaderboardPosition:
 
     def __init__(self, id, name, points, is_current_team):
         self.id = id
@@ -175,12 +175,11 @@ class GameViewsHandler:
             last_submit = Submit.objects.filter(round_num=round.id,
                                                 id_command=id_command,
                                                 final=True).first()
-
-            if last_submit is not None:
+            if not last_submit:
                 last_submit = Submit.objects.filter(
                     round_num=round.id,
-                    id_command=id_command).order_by('created_at').first()
-            if last_submit is not None:
+                    id_command=id_command).order_by('-created_at').first()
+            if last_submit:
                 sum += last_submit.score
 
         return sum

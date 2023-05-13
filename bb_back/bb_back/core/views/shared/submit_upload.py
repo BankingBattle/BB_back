@@ -70,8 +70,7 @@ class SubmitView(APIView):
             for line in csv_file:
                 line: dict
                 if list(line.keys()) != ['id', 'rate']:
-                    raise ValueError(
-                        'CSV file columns must be: "id", "fact", "amount"')
+                    raise ValueError('CSV file columns must be: "id", "rate"')
                 if not all([value.isnumeric() for value in line.values()]):
                     raise ValueError(
                         'All provided values must be valid integers')

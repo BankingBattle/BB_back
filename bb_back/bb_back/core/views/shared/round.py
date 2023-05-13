@@ -136,6 +136,7 @@ class RoundView(APIView):
                              status.HTTP_404_NOT_FOUND:
                              NotFoundResponseSerializer,
                          })
+    @is_staff_user
     def patch(self, request, round_id):
         round = Round.objects.filter(id=round_id).first()
         if not round:
@@ -208,6 +209,7 @@ class CreateRoundView(APIView):
         request_body=CreateRoundRequestSerializer,
         responses={status.HTTP_201_CREATED: CreateRoundResponseSerializer},
     )
+    @is_staff_user
     def post(self, request):
         request_data = CreateRoundRequestSerializer(data=request.data)
 
