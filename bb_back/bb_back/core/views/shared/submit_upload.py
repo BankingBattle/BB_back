@@ -1,6 +1,5 @@
 import codecs
 import csv
-from math import exp
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -78,35 +77,14 @@ class SubmitView(APIView):
             return response(status_code=status.HTTP_400_BAD_REQUEST,
                             data={},
                             message=f"{str(ex)}")
-        score = score_submit(submit_file=submit_file, round_id=round.id)
 
         Submit.objects.create(file=submit_file,
                               id_command=team.id,
                               round_num=submit_schema.get("round_num"),
-                              score=score)
+                              score=0)
 
         response_data = SubmitResponseSerializer(
             data={"response_data": submit_schema})
 
         response_data.is_valid()
         return Response(data=response_data.data, status=status.HTTP_200_OK)
-
-
-def score_submit(submit_file, round_id: int):
-    submit = list(csv.DictReader(codecs.iterdecode(submit_file, 'utf-8')))
-    total_score = 0.0
-    round = Round.objects.get(id=round_id)
-    target = list(
-        csv.DictReader(codecs.iterdecode(round.round_target, 'utf-8')))
-    for result in submit:
-        target_line = [
-            line for line in target if line.get('id') == result.get("id")
-        ][0]
-        rate: float = float(result.get("rate"))  # type: ignore
-        fact = int(target_line.get("fact"))  # type: ignore
-        amount = float(target_line.get("amount"))  # type: ignore
-        p_tup = 1 / (1 + exp(-(0.1 - rate / 100) * 20))
-        result_score = p_tup * ((1 - fact) * amount * rate - fact * amount)
-        total_score += result_score
-
-    return total_score

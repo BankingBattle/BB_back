@@ -16,6 +16,7 @@ from .token import (
 )
 from .user import UserView
 from .verify_email import VerifyEmailView
+from .score import ScoreView
 from .view_404 import view_404
 
 __all__ = [
@@ -26,5 +27,5 @@ __all__ = [
     "CreateRoundView", "UploudRoundData", "TeamApplicationView",
     "ReviewTeamApplicationView", "TeamListView", "CurrentTeamView",
     "MemberApplicationView", "ReviewMemberApplicationView",
-    "UploadRoundTargetView"
+    "UploadRoundTargetView", "ScoreView"
 ]
