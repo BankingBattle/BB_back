@@ -217,7 +217,7 @@ class CreateRoundView(APIView):
         if not request_data.is_valid():
             return failed_validation_response(serializer=request_data)
         round_schema = request_data.data
-        game_req = Game.objects.get(id=round_schema.get("game_id"))
+        game_req = Game.objects.filter(id=round_schema.get("game_id"))
         if not game_req:
             return response(
                 success=False,
