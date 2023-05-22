@@ -227,7 +227,7 @@ class CreateRoundView(APIView):
         round_schema = request_data.data
         Round.objects.create(
             name=round_schema.get("name"),
-            game= Game.objects.get(id=round_schema.get("game_id")),
+            game=Game.objects.get(id=round_schema.get("game_id")),
             description=round_schema.get("description"),
             datetime_start=round_schema.get("datetime_start"),
             datetime_end=round_schema.get("datetime_end"),
