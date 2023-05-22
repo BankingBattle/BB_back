@@ -214,13 +214,20 @@ class CreateRoundView(APIView):
     @is_staff_user
     def post(self, request):
         request_data = CreateRoundRequestSerializer(data=request.data)
-
+        game_req = Game.objects.get(id=round_schema.get("game_id"))
         if not request_data.is_valid():
             return failed_validation_response(serializer=request_data)
+        if not game_req:
+            return response(
+                success=False,
+                status_code=status.HTTP_404_NOT_FOUND,
+                data={},
+                message=f"Game with this id does not exist.",
+            )
         round_schema = request_data.data
         Round.objects.create(
             name=round_schema.get("name"),
-            game=Game.objects.get(id=round_schema.get("game_id")),
+            game= Game.objects.get(id=round_schema.get("game_id")),
             description=round_schema.get("description"),
             datetime_start=round_schema.get("datetime_start"),
             datetime_end=round_schema.get("datetime_end"),
