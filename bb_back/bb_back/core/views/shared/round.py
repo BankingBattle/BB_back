@@ -263,7 +263,8 @@ class GetRoundDataView(APIView):
                 data={},
                 message=f"Round with id = {round_id} has no data.",
             )
-        if not os.path.exists(os.path.join(MEDIA_ROOT, round.data_of_round.name)):
+        if not os.path.exists(
+                os.path.join(MEDIA_ROOT, round.data_of_round.name)):
             return response(
                 success=False,
                 status_code=status.HTTP_404_NOT_FOUND,
