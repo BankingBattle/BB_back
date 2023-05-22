@@ -223,7 +223,7 @@ class CreateRoundView(APIView):
                 success=False,
                 status_code=status.HTTP_404_NOT_FOUND,
                 data={},
-                message=f"Game with this id does not exist.",
+                message="Game with this id does not exist.",
             )
         Round.objects.create(
             name=round_schema.get("name"),
