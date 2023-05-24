@@ -205,6 +205,8 @@ EMAIL_HOST_USER = "banking.battle.info@gmail.com"
 EMAIL_HOST_PASSWORD = "qesvyewhhdgzefqk"
 EMAIL_PORT = "587"
 EMAIL_USE_TLS = True
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://bankingbattle.ru", "https://*.*", "http://*.*"
+]
 # Submit settings
 SUBMIT_MAX_SIZE = 50000000
